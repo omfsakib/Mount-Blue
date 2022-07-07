@@ -1,0 +1,66 @@
+{% extends 'main.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+
+<style>
+    .profile-pic{
+        max-width: 200px;
+        max-height: 200px;
+        margin: 0 auto;
+        border-radius: 50%;
+    }
+    .currently a{
+        display: none;
+    }
+    
+
+    
+    #footer{
+    display: none;
+  }
+  #footer-user{
+    display: block !important;
+  }
+</style>
+
+<br>
+<div class="container">
+<div class="row">
+    <div class="col-md-3">
+        <div class="card card-body">
+            <a href="{% url 'account' %}" class="btn btn-warning">&#8592; Back to Profile</a>
+            <hr>
+            <h5 style="text-align: center;">Account Settings</h5>
+            <hr>
+            <img src="{{ request.user.customer.profile_pic.url }}" class="profile-pic">
+            <img src="{{ request.user.shopowner.profile_pic.url }}" class="profile-pic">
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card card-body">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p>
+                    First name: {{ form2.first_name|add_class:'form-control'|add_class:'edit_name' }}
+                </p>
+                <p>
+                    Last Name: {{ form2.last_name|add_class:'form-control'|add_class:'edit_name' }}
+                </p>
+                <p>
+                    Email: {{ form2.email|add_class:'form-control'|add_class:'edit_email' }}
+                </p>
+                <p>
+                    Phone: {{ form.phone|add_class:'form-control' }}
+                </p>
+                <p class="currently">
+Change:
+<input type="file" name="profile_pic" accept="image/*" class="form-control" id="id_profile_pic">
+                </p>
+                <input type="submit" name="Update Information" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

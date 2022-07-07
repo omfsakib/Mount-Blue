@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mount Blue</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+    <!-- font awesome cdn link  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- custom css file link  -->
+    <link rel="stylesheet" href="{% static '/css/style.css' %}">
+    <link rel="stylesheet" href="{% static '/css/main.css' %}">
+    <script>
+        var user = '{{request.user}}'
+        
+        function getToken(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+        }
+        const csrftoken = getToken('csrftoken');
+        
+        function getCookie(name) {
+            const cookieArr = document.cookie.split(";");
+            
+            for(var i = 0; i < cookieArr.length; i++){
+                const cookiePair = cookieArr[i].split("=");
+                
+                if(name == cookiePair[0].trim()) {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+        var cart = JSON.parse(getCookie('cart'))
+        
+        if(cart == undefined){
+            cart = {}
+            console.log("Cart was created")
+            document.cookie = 'cart=' + JSON.stringify(cart) + ";doamin=;path=/"
+        }
+        
+        console.log('Cart:', cart)
+  
+    </script>
+    <style>
+        #cart-total{
+            display: block;
+            position: absolute;
+            text-align: center;
+            color: #fff;
+            background-color: red;
+            width: 20px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 14px;
+            margin-top: -57px;
+            margin-left: 27px;
+        }
+        
+    </style>
+
+</head>
+<body>
+    
+<!-- header section starts  -->
+
+<header>
+
+    <a href="{% url 'store' %}" class="logo">Mount Blue<span>.</span></a>
+
+    <form action="">
+        <input type="search" id="search-bar">
+        <label for="search-bar" class="fas fa-search"></label>
+    </form>
+
+    <div class="icons">
+        <div id="menu-bar" class="fas fa-bars"></div>
+        <div id="theme-toggler" class="fas fa-moon"></div>
+        <a href="#" class="fas fa-heart"></a>
+        <a href="{% url 'cart' %}" class="fas fa-shopping-cart"><p id="cart-total">{{cartItems}}</p></a>
+        
+        <a href="{% url 'account' %}" class="fas fa-user"></a>
+    </div>
+
+</header>
+
+<!-- header section ends -->
+
+<!-- navbar section  -->
+
+<nav class="navbar">
+
+    <div class="user">
+        {% if request.user.is_authenticated %}
+        <img src="{{request.user.customer.profile_pic.url}}" alt="">
+        <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+        <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+        <img src="images/user-img.png" alt="">
+        <h3><a href="{% url 'login' %}">Login/SignUp</a></h3> 
+        {% endif %}
+    </div>
+
+    <div class="links">
+        <a href="#home">home</a>
+        <a href="#products">products</a>
+        <a href="#featured">featured</a>
+        <a href="#deal">deal</a>
+        <a href="#review">review</a>
+    </div>
+
+    <div id="close" class="fas fa-times"></div>
+
+</nav>
+
+{% block main %}
+{% endblock %}
+
+<!-- footer section starts  -->
+
+<section class="footer">
+
+<div class="footer-container">
+
+    <div class="box-container">
+
+        <div class="box">
+            <h3>quick links</h3>
+            <a href="#home">home</a>
+            <a href="#products">products</a>
+            <a href="#featured">featured</a>
+            <a href="#deal">deal</a>
+            <a href="#review">review</a>
+        </div>
+
+        <div class="box">
+            <h3>extra links</h3>
+            <a href="#">my account</a>
+            <a href="#">my favorite</a>
+            <a href="#">my order</a>
+            <a href="#">my cart</a>
+        </div>
+
+        <div class="box">
+            <h3>donwload links</h3>
+            <a href="#">windows store</a>
+            <a href="#">app store</a>
+            <a href="#">google store</a>
+        </div>
+
+        <div class="box">
+            <h3>contact us</h3>
+            <a href="#">+123-456-7890</a>
+            <a href="#">example@gmail.com</a>
+            <a href="#">mumbai, india - 400104</a>
+            <img src="images/payment.png" alt="">
+        </div>
+
+    </div>
+
+    <div class="credit"> <span> Mount Blue </span> | all rights reserved </div>
+
+</div>
+
+</section>
+
+<!-- footer section ends -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+<!-- custom js file link -->
+<script src="{% static '/js/script.js' %}"></script>
+<script src="{% static '/js/cart.js' %}"></script>
+
+</body>
+</html>
