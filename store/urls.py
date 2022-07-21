@@ -33,8 +33,10 @@ urlpatterns = [
     path('',views.store,name="store"),
     path('cart/',views.cart,name="cart"),
     path('checkout/',views.checkout,name="checkout"),
-    path('view/<str:pk>/',views.productView,name="view"),
     path('delete_review/<str:pk>/',views.deleteReview,name="delete_review"),
     path('update_item/',views.updateItem, name="update_item"),
     path('process_order/',views.processOrder, name="process_order"),
+    path('<str:c_for>/',views.categoryView, name="category_view"),
+    path('<str:c_for>/<str:category>/',views.insideCategory, name="inside_category"),
+    path('<str:c_for>/<str:category>/<str:pk>/',views.productView,name="product_view"),
 ]

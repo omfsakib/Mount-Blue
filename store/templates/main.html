@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 
     <!-- font awesome cdn link  -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- custom css file link  -->
     <link rel="stylesheet" href="{% static '/css/style.css' %}">
-    <link rel="stylesheet" href="{% static '/css/main.css' %}">
     <script>
         var user = '{{request.user}}'
         
@@ -72,7 +72,6 @@
             margin-top: -57px;
             margin-left: 27px;
         }
-        
     </style>
 
 </head>
@@ -202,6 +201,73 @@
 <!-- custom js file link -->
 <script src="{% static '/js/script.js' %}"></script>
 <script src="{% static '/js/cart.js' %}"></script>
+<script type="text/javascript">
+    var updateBtns = document.getElementsByClassName('update-cart')
+
+
+for(var i = 0; i < updateBtns.length; i++){
+  updateBtns[i].addEventListener('click',function(){
+    var productID = this.dataset.product
+    var action = this.dataset.action
+    console.log('productID:',productID,'action:',action)
+
+    console.log('USER:',user)
+    if(user == 'AnonymousUser'){
+      addCookieItem(productID, action)
+    }else{
+      updateUserOrder(productID, action)
+    }
+  })
+}
+
+function addCookieItem(productID, action){
+    console.log('User id not authenticated')
+    
+    if (action == 'add'){
+        if(cart[productID] == undefined){
+            cart[productID] = {'quantity':1}
+        }else{
+            cart[productID]['quantity'] += 1
+        }
+    }
+    if(action == 'remove') {
+        cart[productID]['quantity'] -= 1
+        
+        if(cart[productID]['quantity'] <= 0){
+            delete cart[productID]
+        }
+    }
+    if(action == 'delete') {
+        delete cart[productID]
+    }
+    console.log(cart)
+    document.cookie = 'cart=' + JSON.stringify(cart) + ";doamin=;path=/"
+    location.reload()
+}
+
+function updateUserOrder(productID, action){
+  console.log('User is logged in, sending data...')
+  
+  var url = '/update_item/'
+  const request = new Request(
+    url,
+    {headers: {'Content-Type':'application/json','X-CSRFToken': csrftoken}}
+  );
+  fetch(request, {
+    method:'POST',
+    body:JSON.stringify({'productID':productID,'action':action})
+  })
+
+  .then((response) =>{
+    return response.json()
+  })
+  
+  .then((data) =>{
+    console.log('data:',data)
+    location.reload()
+  })
+}
+</script>
 
 </body>
 </html>

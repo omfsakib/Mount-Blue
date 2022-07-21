@@ -141,10 +141,39 @@ def change_password(request):
         return render(request, 'accounts/change_password.html', args)
 
 def store(request):
-    latest_products = Product.objects.all()
+    total_products = Product.objects.all().count()
+    latest_products = Product.objects.all()[:10]
+    if total_products > 10:
+        after_latest = Product.objects.all()[10:]
+    else:
+        after_latest = Product.objects.all()[:10]
+
     for i in latest_products:
         i.images = ProductImages.objects.filter(product = i)[:1]
         i.total_review = Review.objects.filter(product = i).count()
+    
+    for j in after_latest:
+        j.images = ProductImages.objects.filter(product = j)[:1]
+        j.total_review = Review.objects.filter(product = j).count()
+    
+    featured_products1 = Product.objects.filter(featured = 'True')[:1]
+    featured_products2 = Product.objects.filter(featured = 'True')[1:2]
+    featured_products3 = Product.objects.filter(featured = 'True')[2:3]
+
+    for k in featured_products1:
+        k.images = ProductImages.objects.filter(product = k)
+        k.big_image = ProductImages.objects.filter(product = k)[:1]
+        k.total_review = Review.objects.filter(product = k).count()
+    
+    for k in featured_products2:
+        k.images = ProductImages.objects.filter(product = k)
+        k.big_image = ProductImages.objects.filter(product = k)[:1]
+        k.total_review = Review.objects.filter(product = k).count()
+    
+    for k in featured_products3:
+        k.images = ProductImages.objects.filter(product = k)
+        k.big_image = ProductImages.objects.filter(product = k)[:1]
+        k.total_review = Review.objects.filter(product = k).count()
     
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -154,8 +183,27 @@ def store(request):
         cookieData = cookieCart(request)
         cartItems = cookieData['cartItems']
         order = cookieData['order']
+    
+    reviews = Review.objects.all().order_by('-created_at')
+    total_reviews = reviews.count()
 
-    context = {'cartItems':cartItems,'latest_products':latest_products,'i.images':i.images,'i.total_review':i.total_review}
+    context = {
+        'reviews':reviews,
+        'total_reviews':total_reviews,
+        'featured_products1':featured_products1,
+        'featured_products2':featured_products2,
+        'featured_products3':featured_products3,
+        'after_latest':after_latest,
+        'cartItems':cartItems,
+        'latest_products':latest_products,
+        'i.images':i.images,
+        'i.total_review':i.total_review,
+        'j.images':j.images,
+        'j.total_review':j.total_review,
+        'k.images':k.images,
+        'k.big_image':k.big_image,
+        'k.total_review':k.total_review,
+    }
     return render(request, 'store/store.html',context)
 
 def cart(request):
@@ -283,7 +331,7 @@ def processOrder(request):
         
     return JsonResponse('Order completed!', safe=False)
 
-def productView(request,pk):
+def productView(request,pk,*args,**kwargs):
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
@@ -291,8 +339,11 @@ def productView(request,pk):
     else:
         order = {'get_cart_total':0, 'get_cart_items':0, 'shipping':False}
         cartItems = order['get_cart_items']
-
+    c_for = kwargs.pop('c_for')
+    category = Category.objects.get(id = kwargs.pop('category') )
     product = Product.objects.get(id = pk)
+    images = ProductImages.objects.filter(product = product)
+    big_image = ProductImages.objects.filter(product = product)[:1]
     demo_price = product.price + product.discount_amount
 
     review = product.review_set.all().order_by('-created_at')
@@ -319,7 +370,7 @@ def productView(request,pk):
         form = ReviewForm()
 
     stock = product.stock
-    context = {'demo_price':demo_price,'stock':stock,'avg_rating':avg_rating,'review':review,'total_review':total_review,
+    context = {'c_for':c_for,'category':category,'images':images,'big_image':big_image,'demo_price':demo_price,'stock':stock,'avg_rating':avg_rating,'review':review,'total_review':total_review,
     'form':form,'product':product,'cartItems':cartItems}
     return render(request, "store/view.html",context)
 
@@ -331,3 +382,46 @@ def deleteReview(request, pk):
 
     context = {'item':review}
     return render(request,'store/delete.html',context)
+
+def categoryView(request,*args,**kwargs):
+    products = Product.objects.filter(*args,**kwargs)
+    categorys = Category.objects.all()
+    c_for = kwargs.pop('c_for')
+    
+    for i in categorys:
+        i.products = products.filter(category = i)
+        for j in i.products:
+            j.images = ProductImages.objects.filter(product = j)[:1]
+            j.total_review = Review.objects.filter(product = j).count()
+
+    context = {
+        'c_for':c_for,
+        'categorys':categorys,
+        'i.products':i.products,
+        'j.images':j.images,
+        'j.total_review':j.total_review
+        }
+    return render(request, "store/categoryview.html",context)
+
+def insideCategory(request,*args,**kwargs):
+    category = Category.objects.get(id = kwargs.pop('category'))
+    products = Product.objects.filter(*args,**kwargs)
+    number = 0
+    c_for = kwargs.pop('c_for')
+    
+    for i in products:
+        i.images = ProductImages.objects.filter(product = i)
+        i.big_image = ProductImages.objects.filter(product = i)[:1]
+        i.total_review = Review.objects.filter(product = i).count()
+        i.no = number + 1
+
+    context = {
+        'c_for':c_for,
+        'category':category,
+        'products':products,
+        'i.images':i.images,
+        'i.big_image':i.big_image,
+        'i.total_review':i.total_review,
+        'i.no':i.no,
+    }
+    return render(request, "store/insidecategory.html",context)

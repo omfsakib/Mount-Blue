@@ -538,6 +538,9 @@ header.active{
     border:.1rem solid var(--light-color);
     padding:2rem;
 }
+.swiper-pointer-events {
+    overflow: hidden;
+}
 
 .review .review-slider .slide .stars{
     padding:1rem 0;

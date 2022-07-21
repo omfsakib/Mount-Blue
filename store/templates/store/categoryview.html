@@ -1,0 +1,83 @@
+{% extends 'main.html' %}
+
+{% block main %}
+
+<section class="products" id="products">
+    <p><a href="{% url 'store' %}">Home</a> > <a href="/{{c_for}}">{{c_for}}</a></p>
+    {% for i in categorys %}
+
+    {% if i.products %}
+
+    <a href="/{{c_for}}/{{i.id}}"><h1 class="heading">  <span> {{i.name}}</span> </h1></a>
+
+<div class="swiper-container product-slider gap">
+    <div class="swiper-wrapper">
+        {% for j in i.products %}
+        <div class="swiper-slide">
+            <div class="slide">
+                <div class="icons">
+                    <a href="#" class="fas fa-heart"></a>
+                    <a href="#" class="fas fa-search"></a>
+                    <a href="#" class="fas fa-eye"></a>
+                </div>
+                <div class="image">
+                    {% for k in j.images %}
+                        <img src="{{ k.img.url }}" alt="">
+                    {% endfor %}
+                </div>
+                <div class="content">
+                    <div class="stars">
+                        {% if j.rate <= 0 %}
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        {% elif j.rate <= 1 %}
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        {% elif j.rate <= 2 %}
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        {% elif j.rate <= 3 %}
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        {% elif j.rate <= 4 %}
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        {% else %}
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        {% endif %}
+                        <span>( {% if j.total_review == 0 %} Not reviewed yet {% else %} {{j.total_review}} reviews {% endif %} )</span>
+                    </div>
+                    <h3>{{j.name}}</h3>
+                    <div class="price">&#2547;{{j.price}} {% if j.discount > 0 %} <span>&#2547;{{ j.demo_price }}</span> {% endif %} </div>
+                    <button data-product={{j.id}} data-action="add" class="btn update-cart">add to cart</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+{% endif %}
+{% endfor %}
+</section>
+{% endblock %}

@@ -31,6 +31,10 @@ class Size(models.Model):
 
 
 class Product(models.Model):
+    FOR = (
+        ('woman','Woman'),
+        ('man', 'Man')
+    )
     name = models.CharField(max_length=200,blank = True, null=True)
     price = models.FloatField(default=0,null=True)
     category = models.ManyToManyField(Category)
@@ -44,6 +48,8 @@ class Product(models.Model):
     discount = models.IntegerField(default=0, null = True,blank = True)
     discount_amount = models.FloatField(default=0, null = True,blank = True)
     rate = models.FloatField(default=0, null = True,blank = True)
+    featured = models.BooleanField(default=False,blank=True,null=True)
+    c_for = models.CharField(max_length=200,blank=True, null=True,choices=FOR)
 
     def __str__(self):
         return self.name
