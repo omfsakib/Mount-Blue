@@ -211,14 +211,23 @@ def cart(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
+        for item in items:
+            product = Product.objects.get(id = item.product.id)
+            sizes = product.size.all()
+            colors = product.color.all()
+            item.image = ProductImages.objects.filter(product = product)[:1]
         cartItems = order.get_cart_items
     else:
         cookieData = cookieCart(request)
         cartItems = cookieData['cartItems']
         order = cookieData['order']
         items = cookieData['items']
-    
-    context = {'items':items,'cartItems':cartItems,'order':order}
+        for item in items:
+            product = Product.objects.get(id = item.product.id)
+            sizes = product.size.all()
+            colors = product.color.all()
+            item.image = ProductImages.objects.filter(product = product)[:1]
+    context = {'items':items,'cartItems':cartItems,'order':order,'item.image':item.image,'sizes':sizes,'colors':colors}
     return render(request, 'store/cart.html',context)
 
 def checkout(request):
@@ -226,6 +235,9 @@ def checkout(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
+        for item in items:
+            product = Product.objects.get(id = item.product.id)
+            item.image = ProductImages.objects.filter(product = product)[:1]
         cartItems = order.get_cart_items
         delivery_charge = Delivery_charge.objects.all()
         for i in delivery_charge:
@@ -243,7 +255,9 @@ def checkout(request):
         cartItems = cookieData['cartItems']
         order = cookieData['order']
         items = cookieData['items']
-
+        for item in items:
+            product = Product.objects.get(id = item.product.id)
+            item.image = ProductImages.objects.filter(product = product)[:1]
         delivery_charge = Delivery_charge.objects.all()
         for i in delivery_charge:
             chrge = i.fee
@@ -254,7 +268,7 @@ def checkout(request):
             delivery_chrg = float(chrge-(chrge*(discount/100)))
         elif order['get_cart_total'] >= 1500:
             delivery_chrg = float(chrge-(chrge*((2*discount)/100)))
-    context = {'delivery_chrg':delivery_chrg,'items':items,'order':order,'cartItems':cartItems}
+    context = {'delivery_chrg':delivery_chrg,'items':items,'order':order,'cartItems':cartItems,'item.image':item.image}
     return render(request, 'store/checkout.html',context)
 
 
@@ -263,6 +277,9 @@ def updateItem(request):
     data = json.loads(request.body)
     productId = data['productID']
     action = data['action']
+    color = data['color']
+    size = data['size']
+    print(color,size)
 
     customer = request.user.customer
     product = Product.objects.get(id=productId)
@@ -277,6 +294,12 @@ def updateItem(request):
 
     elif action == 'delete':
         orderItem.quantity = 0
+    
+    elif action == 'color':
+        orderItem.color = color
+    
+    elif action == 'size':
+        orderItem.size = size
             
     orderItem.save()
 

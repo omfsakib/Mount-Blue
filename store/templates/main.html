@@ -209,18 +209,26 @@ for(var i = 0; i < updateBtns.length; i++){
   updateBtns[i].addEventListener('click',function(){
     var productID = this.dataset.product
     var action = this.dataset.action
-    console.log('productID:',productID,'action:',action)
+    var color = this.dataset.color
+    if (color == undefined){
+        color = "undefined"
+    }
+    var size = this.dataset.size
+    if (size == undefined){
+        size = "undefined"
+    }
+    console.log('productID:',productID,'action:',action,'color:',color,'size:',size)
 
     console.log('USER:',user)
     if(user == 'AnonymousUser'){
-      addCookieItem(productID, action)
+      addCookieItem(productID, action, color, size)
     }else{
-      updateUserOrder(productID, action)
+      updateUserOrder(productID, action, color, size )
     }
   })
 }
 
-function addCookieItem(productID, action){
+function addCookieItem(productID, action,color, size){
     console.log('User id not authenticated')
     
     if (action == 'add'){
@@ -240,12 +248,18 @@ function addCookieItem(productID, action){
     if(action == 'delete') {
         delete cart[productID]
     }
+    if(action == 'color') {
+        cart[productID]['color'] = color
+    }
+    if(action == 'size') {
+        cart[productID]['size'] = size
+    }
     console.log(cart)
     document.cookie = 'cart=' + JSON.stringify(cart) + ";doamin=;path=/"
     location.reload()
 }
 
-function updateUserOrder(productID, action){
+function updateUserOrder(productID, action, color, size){
   console.log('User is logged in, sending data...')
   
   var url = '/update_item/'
@@ -255,7 +269,7 @@ function updateUserOrder(productID, action){
   );
   fetch(request, {
     method:'POST',
-    body:JSON.stringify({'productID':productID,'action':action})
+    body:JSON.stringify({'productID':productID,'action':action,'color':color,'size':size,})
   })
 
   .then((response) =>{

@@ -30,6 +30,77 @@
         padding: 1px;
         margin-left: 3px;
     }
+    
+}
+.col-lg-4, .col-lg-6, .col-lg-8, .col-lg-12{
+	margin-top: 10px;
+}
+
+.btn{
+	border-radius: 0;
+}
+
+
+.form-field{
+	width:250px;
+	display: inline-block;
+	padding: 5px;
+}
+
+.cart-row{
+	display: flex;
+    align-items: flex-stretch;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ececec;
+
+}
+
+.quantity{
+	display: inline-block;
+	font-weight: 700;
+	padding-right:10px;
+	
+
+}
+
+.chg-quantity{
+	width: 12px;
+	cursor: pointer;
+	display: block;
+	margin-top: 5px;
+	transition:.1s;
+}
+
+.chg-quantity:hover{
+	opacity: .6;
+}
+
+.box-element{
+        box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+        background-color: #fff;
+        border-radius: 4px;
+        padding: 10px;
+}
+.thumbnail{
+    width: 100%;
+    height: 200px;
+    -webkit-box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
+        -moz-box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
+        box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
+}
+.row-image{
+    display: block;
+    margin: auto;
+    height: 80px;
+}
+
+.product{
+    border-radius: 0 0 4px 4px;
+}
+
+.hidden{
+	display: none!important;
 }
 </style>
 
@@ -69,18 +140,22 @@
         <br>
         <div class="box-element cart-check">
             <div class="cart-row">
-                <div style="flex:2"></div>
-                <div style="flex:2"><strong>Item</strong></div>
+                <div style="flex:1"></div>
+                <div style="flex:1"><strong>Item</strong></div>
                 <div style="flex:1"><strong>Price</strong></div>
+                <div style="flex:1"><strong>Color</strong></div>
+                <div style="flex:1"><strong>Size</strong></div>
                 <div style="flex:1"><strong>Quantity</strong></div>
                 <div style="flex:1"><strong>Total</strong></div>
                 <div style="flex:1"><strong>Remove</strong></div>
             </div>
             {% for item in items %}
             <div class="cart-row">
-                <div style="flex:2"><img class="row-image" src="{{item.product.img.url}}"></div>
-                <div style="flex:2"><p>{{item.product.name}}</p></div>
+                <div style="flex:1">{% for i in item.image %}<img class="row-image" src="{{i.img.url}}">{% endfor %}</div>
+                <div style="flex:1"><p>{{item.product.name}}</p></div>
                 <div style="flex:1"><p>&#2547;{{item.product.price|floatformat:2}}</p></div>
+                <div style="flex:1">{% for i in colors %} {% if item.color == i.color %} <input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="color" checked  data-color="{{i.color}}"> {{i.color}}</input> <br> {% else %}<input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="color"  data-color="{{i.color}}"> {{i.color}} </input><br> {% endif %}{% endfor %}</div>
+                <div style="flex:1">{% for i in sizes %}{% if item.size == i.size %} <input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="size" checked data-size="{{i.size}}" > {{i.size}}</input> <br> {% else %}<input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="size"  data-size="{{i.size}}" > {{i.size}} </input> <br> {% endif %}{% endfor %}</div>
                 <div style="flex:1">
                     <p class="quantity">{{item.quantity}}</p>
                     <div class="quantity">
@@ -89,7 +164,7 @@
                     </div>
                 </div>
                 <div style="flex:1"><p>&#2547;{{item.get_total|floatformat:2}}</p></div>                
-                <div style="flex:1"><button data-product="{{item.product.id}}" class="btn btn-danger update-cart" data-action="delete"> Remove </button></div>
+                <div style="flex:1"><button data-product="{{item.product.id}}" class="btn btn-sm btn-danger update-cart" data-action="delete"> Remove </button></div>
             </div>
             {% endfor %}
         </div>
