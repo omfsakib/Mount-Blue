@@ -67,8 +67,12 @@
                 </div>
                 <p>{{i.description}}</p>
                 <div class="price">&#2547;{{i.price}} {% if i.discount > 0 %} <span>&#2547;{{ i.demo_price }}</span> {% endif %} </div>
+                {% if i.stock <= 0 %}
+                <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                {% else %}
                 <button data-product={{i.id}} data-action="add" class="btn update-cart">add to cart</button>
-                <a href="/{{c_for}}/{{category.id}}/{{i.id}}"><button class="btn">View</button></a>
+                {% endif %}
+                <a href="{% url 'product_view' i.id %}"><button class="btn">View</button></a>
             </div>
         </div>
         {% endfor %}

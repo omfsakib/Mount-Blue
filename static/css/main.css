@@ -1,0 +1,43 @@
+
+body{
+    background-color: #edeff5;
+}
+#total-orders{
+    background-color: #4cb4c7;
+}
+#orders-delivered{
+    background-color: #7abecc;
+}
+#orders-pending{
+    background-color: #7CD1C0;
+}
+#footer {
+    position:relative;
+    bottom:0;
+    width:100%;
+    height:60px;   /* Height of the footer */
+    background:#6cf;
+}
+#footer-user{
+  display: none;
+}
+div.pager {
+    text-align: center;
+    margin: 1em 0;
+}
+
+div.pager span {
+    display: inline-block;
+    width: 1.8em;
+    height: 1.8em;
+    line-height: 1.8;
+    text-align: center;
+    cursor: pointer;
+    background: #7CD1C0;
+    color: #fff;
+    margin-right: 0.5em;
+}
+
+div.pager span.active {
+    background: #c00;
+}

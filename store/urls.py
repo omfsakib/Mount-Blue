@@ -31,12 +31,36 @@ urlpatterns = [
     path('account/edit/',views.accountSettings,name='edit_account'),
     path('change-password/',views.change_password,name = 'change_password'),
     path('',views.store,name="store"),
+    path('shops/',views.shops,name="shops"),
+    path('shop/dashboard/',views.home,name="home"),
+    path('view_shop/<str:pk>/',views.view_shops,name="view_shop"),
+    path('user/dashboard/',views.userDashboard,name='user-page'),
+    path('view_order/<str:pk>/',views.viewOrder,name='view_order'),
     path('cart/',views.cart,name="cart"),
     path('checkout/',views.checkout,name="checkout"),
+    path('products/',views.products,name="products"),
+    path('delete_order/<str:pk>/',views.deleteOrder,name='delete_order'),
     path('delete_review/<str:pk>/',views.deleteReview,name="delete_review"),
     path('update_item/',views.updateItem, name="update_item"),
     path('process_order/',views.processOrder, name="process_order"),
-    path('<str:c_for>/',views.categoryView, name="category_view"),
-    path('<str:c_for>/<str:category>/',views.insideCategory, name="inside_category"),
-    path('<str:c_for>/<str:category>/<str:pk>/',views.productView,name="product_view"),
+    path('product/<str:pk>/',views.productView,name="product_view"),
+    path('category/<str:c_for>/',views.categoryView, name="category_view"),
+    path('category/<str:c_for>/<str:category>/',views.insideCategory, name="inside_category"),
+    path('reset-password/', PasswordResetView.as_view(
+        template_name= 'accounts/reset_password.html',
+        success_url=reverse_lazy('password_reset_done'),
+        email_template_name= 'accounts/reset_password_email.html'
+    ), name='reset_password'),
+
+    path('reset-password/done/',PasswordResetDoneView.as_view(
+        template_name= 'accounts/reset_password_done.html'
+    ),name= 'password_reset_done'),
+    path('reset-password/confirm/<uidb64>/<token>/',PasswordResetConfirmView.as_view(
+        template_name= 'accounts/reset_password_confirm.html',
+         success_url=reverse_lazy('password_reset_complete'),
+    ),name= 'password_reset_confirm' ),
+    path('reset-password/complete/',PasswordResetCompleteView.as_view(
+        template_name= 'accounts/reset_password_complete.html'
+    ),name ='password_reset_complete')
+
 ]

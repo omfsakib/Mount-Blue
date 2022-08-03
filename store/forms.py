@@ -11,7 +11,11 @@ class CustomerForm(ModelForm):
         fields ='__all__'
         exclude = ['user']
 
-
+class ShopOwnerForm(ModelForm):
+    class Meta:
+        model = ShopOwner
+        fields ='__all__'
+        exclude = ['user']
 
 class OrderForm(ModelForm):
     class Meta:

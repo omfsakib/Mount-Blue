@@ -10,6 +10,42 @@ class Customer(models.Model):
     profile_pic = models.ImageField(default="profile.png",null = True,blank = True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
 
+    def __str__(self):
+        return self.user.username
+
+class ShopOwner(models.Model):
+    user = models.OneToOneField(User, null = True,blank=True ,on_delete=models.CASCADE)
+    phone = models.CharField(max_length=200, null=True )
+    address = models.CharField(max_length=200, blank=True, null=True )
+    profile_pic = models.ImageField(default="profile.png",null = True,blank = True)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    auth_token = models.CharField(max_length=100)
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.user)
+
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user = instance)
+        print('Profile created')
+
+
+def update_profile(sender, instance, created, **kwargs):
+    if created == False:
+        instance.UserProfile.save()
+        print('Profile Updated')
+
+    def __str__(self):
+        return self.name
+
 class Category(models.Model):
     name = models.CharField(max_length=200, null=True)
 
@@ -35,6 +71,7 @@ class Product(models.Model):
         ('woman','Woman'),
         ('man', 'Man')
     )
+    shopowner = models.ForeignKey(ShopOwner, null=True, on_delete= models.CASCADE)
     name = models.CharField(max_length=200,blank = True, null=True)
     price = models.FloatField(default=0,null=True)
     category = models.ManyToManyField(Category)
@@ -65,6 +102,7 @@ class Order(models.Model):
         ('Delivered','Delivered'),
         ('Take','Take')
     )
+    shop = models.ForeignKey(ShopOwner, on_delete=models.SET_NULL, blank=True, null=True)
     customer = models.ForeignKey(Customer, null=True, on_delete= models.CASCADE)
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=200, null=True)
@@ -72,6 +110,8 @@ class Order(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     delivery_fee = models.FloatField(default=0,blank=True,null=True)
     total = models.FloatField(default=0,blank=True,null=True)
+    advance = models.FloatField(default=0,blank=True,null=True)
+    due = models.FloatField(default=0,blank=True,null=True)
     status = models.CharField(default="Pending",max_length=200,blank=True, null=True,choices=STATUS)
     taken_user = models.ForeignKey(User, null=True, on_delete= models.CASCADE)
 
@@ -110,10 +150,13 @@ class OrderItem(models.Model):
         ('Out for delivery', 'Out for delivery'),
         ('Delivered','Delivered')
     )
+    shop = models.ForeignKey(ShopOwner, on_delete=models.SET_NULL, blank=True, null=True)
     customer = models.ForeignKey(Customer, null=True, on_delete= models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True)
     quantity = models.IntegerField(default=0,null=True,blank=True)
+    rate = models.FloatField(default=0,blank=True,null=True)
+    total = models.FloatField(default=0,blank=True,null=True)
     color = models.CharField(blank=True,null=True, max_length=100)
     size = models.CharField(blank=True,null=True, max_length=100)
     date_added = models.DateTimeField(auto_now_add=True)

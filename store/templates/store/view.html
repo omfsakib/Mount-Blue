@@ -1,5 +1,6 @@
 {% extends 'main.html' %}
 {% load static %}
+
 {% block main %}
     
 <style>
@@ -100,25 +101,8 @@
 .checked {
   color: #ffc107;
 }
-@media only screen and (max-width:500px) {
-  .view_left {
-    height: 380px;
-}
-.view_left img {
-    max-width: 245px;
-    max-height: 214px;
-}
-textarea.form-control {
-    height: 60px;
-}
-.collapsible {
-    padding: 5px;
-    height: 50px;
-    font-size: 20px;
-}
-}
 </style>
-<div class="container">    <p><a href="{% url 'store' %}">Home</a> > <a href="/{{c_for}}">{{c_for}}</a> > <a href="/{{c_for}}/{{category.id}}">{{category}}</a> > <a href="/{{c_for}}/{{category.id}}/{{product.id}}">{{product.name}}</a></p>
+<div class="container"> 
 
   <div class="row view">
     <div class="col-md-6">

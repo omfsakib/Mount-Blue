@@ -1,0 +1,42 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block main %}
+<style>
+
+.box-element{
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 10px;
+}
+.thumbnail{
+    display: block;
+    margin: auto;
+    height: 200px;
+    max-width: 300px;
+    background-color: #fff;
+}
+h6{
+    font-size: 2rem;
+}
+</style>
+<br><br>
+<div class="container">
+    <div class="row">
+        {% for shop in shopowner %}
+        <div class="col-md-4">
+            <div class="card card-body">
+                <div style="background-color: #fff;">
+                    <img class="thumbnail" src="{{ shop.profile_pic.url }}" alt="">
+                    <div class="box-element product">
+                      <h6><strong>{{ shop.user.first_name }} {{ shop.user.last_name }}</strong></h6><hr>
+                      <a href="{% url 'view_shop' shop.id %}" class="btn btn-outline-success">View</a>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<br>
+{% endblock %}

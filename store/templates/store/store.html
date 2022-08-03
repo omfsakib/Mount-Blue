@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+
 {% block main %}
 <!-- home section starts  -->
 
@@ -31,7 +32,7 @@
             <div class="content">
                 <span>upto 50% off</span>
                 <h3>for womans</h3>
-                <a href="/woman" class="btn">shop now</a>
+                <a href="/category/woman" class="btn">shop now</a>
             </div>
         </div>
 
@@ -40,7 +41,7 @@
             <div class="content">
                 <span>upto 50% off</span>
                 <h3>for mans</h3>
-                <a href="#" class="btn">shop now</a>
+                <a href="/category/man" class="btn">shop now</a>
             </div>
         </div>
         
@@ -64,7 +65,7 @@
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-search"></a>
-                    <a href="#" class="fas fa-eye"></a>
+                    <a href="{% url 'product_view' i.id %}" class="fas fa-eye"></a>
                 </div>
                 <div class="image">
                     {% for j in i.images %}
@@ -114,7 +115,12 @@
                     </div>
                     <h3>{{i.name}}</h3>
                     <div class="price">&#2547;{{i.price}} {% if i.discount > 0 %} <span>&#2547;{{ i.demo_price }}</span> {% endif %} </div>
+                    {% if i.stock <= 0 %}
+                    <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                    {% else %}
                     <button data-product={{i.id}} data-action="add" class="btn update-cart">add to cart</button>
+                    {% endif %}
+                    
                 </div>
             </div>
         </div>
@@ -182,7 +188,11 @@
                     </div>
                     <h3>{{j.name}}</h3>
                     <div class="price">&#2547;{{j.price}} {% if j.discount > 0 %} <span>&#2547;{{ j.demo_price }}</span> {% endif %} </div>
+                    {% if j.stock <= 0 %}
+                    <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                    {% else %}
                     <button data-product={{j.id}} data-action="add" class="btn update-cart">add to cart</button>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -262,7 +272,11 @@
                 </div>
                 <p>{{k.description}}</p>
                 <div class="price">&#2547;{{k.price}} {% if k.discount > 0 %} <span>&#2547;{{ k.demo_price }}</span> {% endif %} </div>
+                {% if k.stock <= 0 %}
+                <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                {% else %}
                 <button data-product={{k.id}} data-action="add" class="btn update-cart">add to cart</button>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -324,7 +338,11 @@
                 </div>
                 <p>{{k.description}}</p>
                 <div class="price">&#2547;{{k.price}} {% if k.discount > 0 %} <span>&#2547;{{ k.demo_price }}</span> {% endif %} </div>
+                {% if k.stock <= 0 %}
+                <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                {% else %}
                 <button data-product={{k.id}} data-action="add" class="btn update-cart">add to cart</button>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -387,7 +405,11 @@
                 </div>
                 <p>{{k.description}}</p>
                 <div class="price">&#2547;{{k.price}} {% if k.discount > 0 %} <span>&#2547;{{ k.demo_price }}</span> {% endif %} </div>
+                {% if k.stock <= 0 %}
+                <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                {% else %}
                 <button data-product={{k.id}} data-action="add" class="btn update-cart">add to cart</button>
+                {% endif %}
             </div>
         </div>
         {% endfor %}

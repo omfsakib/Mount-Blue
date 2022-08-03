@@ -5,7 +5,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mount Blue</title>
+    <link rel="icon" type="image/x-icon" href="{% static '/images/favicon.ico' %}">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ghore Bahire</title>
+    
+    {% block head %}
+    {% endblock %}
 
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 
@@ -13,8 +21,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+   
     <!-- custom css file link  -->
     <link rel="stylesheet" href="{% static '/css/style.css' %}">
+
     <script>
         var user = '{{request.user}}'
         
@@ -58,6 +68,25 @@
         console.log('Cart:', cart)
   
     </script>
+    <script>
+        function productFunction() {
+          var input, filter, ul, li, a, i, txtValue;
+          input = document.getElementById('search-bar');
+          filter = input.value.toUpperCase();
+          ul = document.getElementById("live-filter");
+          li = ul.getElementsByClassName('swiper-slide');
+          
+          for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("h3")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              li[i].style.display = "";
+            } else {
+              li[i].style.display = "none";
+            }
+          }
+        }
+        </script>
     <style>
         #cart-total{
             display: block;
@@ -72,7 +101,17 @@
             margin-top: -57px;
             margin-left: 27px;
         }
+    p{
+        font-size: 1.5em;
+    }
+    h6{
+        font-size: 2em;
+    }
+    .navbar{
+        display: block !important;
+    }
     </style>
+    
 
 </head>
 <body>
@@ -81,10 +120,10 @@
 
 <header>
 
-    <a href="{% url 'store' %}" class="logo">Mount Blue<span>.</span></a>
+    <a href="{% url 'store' %}" class="logo">Ghore Bahire<span>.</span></a>
 
     <form action="">
-        <input type="search" id="search-bar">
+        <input  type="search" onkeyup="productFunction()" id="search-bar">
         <label for="search-bar" class="fas fa-search"></label>
     </form>
 
@@ -111,17 +150,16 @@
         <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
         <a href="{% url 'logout' %}">Logout</a>
         {% else %}
-        <img src="images/user-img.png" alt="">
+        <img src="{% static '/images/profile.png' %}" alt="">
         <h3><a href="{% url 'login' %}">Login/SignUp</a></h3> 
         {% endif %}
     </div>
 
     <div class="links">
-        <a href="#home">home</a>
-        <a href="#products">products</a>
-        <a href="#featured">featured</a>
-        <a href="#deal">deal</a>
-        <a href="#review">review</a>
+        <a href="{% url 'store' %}">home</a>
+        <a href="{% url 'products' %}">products</a>
+        <a href="{% url 'shops' %}">shops</a>
+        <a href="{% url 'user-page' %}">Dashboard</a>
     </div>
 
     <div id="close" class="fas fa-times"></div>
@@ -173,7 +211,7 @@
 
     </div>
 
-    <div class="credit"> <span> Mount Blue </span> | all rights reserved </div>
+    <div class="credit"> <span> Ghore Bahire </span> | all rights reserved </div>
 
 </div>
 
@@ -184,23 +222,11 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 
 <!-- custom js file link -->
 <script src="{% static '/js/script.js' %}"></script>
-<script src="{% static '/js/cart.js' %}"></script>
 <script type="text/javascript">
     var updateBtns = document.getElementsByClassName('update-cart')
 

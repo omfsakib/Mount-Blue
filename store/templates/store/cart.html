@@ -1,5 +1,6 @@
 {% extends 'main.html' %}
 {% load static %}
+
 {% block main %}
     
 <style>
@@ -119,18 +120,30 @@
                     <th><h5>Total:<strong> &#2547;{{order.get_cart_total|floatformat:2}}</strong></h5></th>
                     {% if request.user.is_authenticated %}
                     {% if request.user.customer.phone %}
+                    {% if cartItems > 0 %}
                     <th>
                         <a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
                     </th>
+                    {% else %}
+                    <th>
+                        <a  style="float:right; margin:5px;" class="btn btn-success" href="">Checkout</a>
+                    </th>
+                    {% endif %}
                     {% else %}
                     <th>
                         <a  style="float:right; margin:5px;" class="btn btn-danger" href="{% url 'account' %}">Complete profile to checkout</a>
                     </th>
                     {% endif %}
                     {% else %}
+                    {% if cartItems > 0 %}
                     <th>
                         <a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
                     </th>
+                    {% else %}
+                    <th>
+                        <a  style="float:right; margin:5px;" class="btn btn-success" href="">Checkout</a>
+                    </th>
+                    {% endif %}
                     {%endif%}
                 </tr>
             </table>

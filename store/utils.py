@@ -1,6 +1,8 @@
 import json
+import uuid
 from .models import *
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import login
+from django.contrib.auth.models import Group
 
 def cookieCart(request):
     try:
@@ -16,6 +18,7 @@ def cookieCart(request):
             cartItems += cart[i]["quantity"]
             
             product = Product.objects.get(id = i)
+            print(product)
             total = (product.price * cart[i]['quantity'])
             
             order['get_cart_total'] += total
@@ -26,9 +29,6 @@ def cookieCart(request):
                     'id' : product.id,
                     'name':product.name,
                     'price': product.price,
-                    'img':{
-                        'url':product.img.url,
-                    },
                 },
                 'quantity' : cart[i]["quantity"],
                 'get_total':total
@@ -59,6 +59,11 @@ def guestOrder(request,data):
         user = User.objects.create(username= username,first_name = name)
         customer.user = user
         customer.save()
+        auth_token=str(uuid.uuid4())
+        profile_obj = UserProfile.objects.create(user = user,auth_token=auth_token)
+        profile_obj.save()
+        group = Group.objects.get(name = 'customer')
+        user.groups.add(group)
         login(request,user)
     else:
         user = customer.user

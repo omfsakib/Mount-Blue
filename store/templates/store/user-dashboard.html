@@ -1,0 +1,77 @@
+{% extends 'main.html' %}
+
+{% load widget_tweaks %}
+{% block head %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<style>
+  #total-orders{
+      background-color: #4cb4c7;
+  }
+  #orders-delivered{
+      background-color: #7abecc;
+  }
+  #orders-pending{
+      background-color: #7CD1C0;
+  }
+  .filter-form{
+      width: 170px;
+      display: inline-block;
+      margin-right: 20px;
+  }
+  .filter-form:last-child{
+      width: 77px;
+  }
+</style>
+{% endblock %}
+{% block main %}
+<section class="user-dashboard">
+  {% include 'status.html' %}
+  <br><br>
+<div class="row">
+    <div class="col">
+        <div class="card card-body" style="align-items: center;">
+            <div class="text-center">
+                <h3>Filter Order</h3>
+                <hr>
+            </div>
+            <form method="get">
+                <p class="filter-form">Status: <br><br>{{ myFilter.form.status|add_class:'form-control' }}</p>
+                <p class="filter-form">Start Date: <br><br><input class="form-control" type="date" name="start_date" id="id_start_date"></p>
+                <p class="filter-form">End Date: <br><br><input class="form-control" type="date" name="end_date" id="id_end_date"></p>
+                <p class="filter-form"><br><br><input class="btn btn-primary"  type="submit" name="Search" ></p>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <div class="card card-body">
+            <table class="table table-sm paginated">
+                <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Tracking Id</th>
+                    <th>Date Ordered</th>
+                    <th>Status</th>
+                    <th>View</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+                {% for order in orders %}
+                <tr>
+                    <th>#{{order.id}}</th>
+                    <th>#{{order.transaction_id}}</th>
+                    <th>{{order.date_added}}</th>
+                    <th>{{order.status}}</th>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'view_order' order.id %}">View</a></td>
+                    <td><a class="btn btn-sm btn-danger" href="{% url 'delete_order' order.id %}">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

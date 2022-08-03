@@ -5,7 +5,11 @@ from .models import *
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ("user", "phone","date_created")
     search_fields = ("phone", )
-    
+ 
+@admin.register(ShopOwner)
+class ShopOwnerAdmin(admin.ModelAdmin):
+    list_display = ("user", "phone","date_created")
+    search_fields = ("phone", )   
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

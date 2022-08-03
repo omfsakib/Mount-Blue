@@ -1,0 +1,80 @@
+{% load static %}
+<style>
+    .hello-msg{
+        font-size:18px;
+        color:#343a40;
+        margin-right: 20px;
+    }
+    #cart-icon{
+      width: 25px;
+      display: inline-block;
+      margin-left: 15px;
+      color: azure;
+    }
+    #cart-total{
+      display: block;
+      text-align: center;
+      color: #fff;
+      background-color: red;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 14px;
+    }
+    .skiptranslate {
+        display: none;
+    }
+    .skiptranslate.goog-te-gadget {
+        display: block;
+    }
+    .navbar-light .navbar-toggler {
+        margin-left: 140px;
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a href="https://nityaproyojon.com/"><img src="{% static 'images/logo.png'%}" alt="" height="40px"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        {% if request.user.is_staff%}
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'home' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'products' %}">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account' %}">Profile</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'user-page' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account' %}">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'ongoing_order' %}">Ongoing Order</a>
+        </li>
+        <li class="nav-item">
+          <div id="google_element"></div>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+    {% if not request.user.is_staff %}
+    <div class="form-inline my-2 my-lg-0">
+      <a href="{% url 'cart' %}"><img src="{% static 'images/cart.png' %}" alt="" id="cart-icon"></a>
+      <p id="cart-total">{{cartItems}}</p>
+
+    </div><br>
+    {% endif %} 
+    {% if request.user.is_authenticated %}
+    <span class="hello-msg">Hello, {{request.user.first_name}}</span>
+    <span ><a class="hello-msg" href="{% url 'logout' %}">Logout</a></span>
+    {% else %}
+    <span ><a class="hello-msg" href="{% url 'login' %}">Login</a></span>
+    {% endif %}
+  </nav>
