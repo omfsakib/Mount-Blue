@@ -5,7 +5,7 @@
 <!-- featured section starts  -->
 
 <section class="featured" id="featured">
-    <p><a href="{% url 'store' %}">Home</a> > <a href="/{{c_for}}">{{c_for}}</a> > <a href="{{category.id}}">{{category}}</a></p>
+    <p><a href="{% url 'store:store' %}">Home</a> > <a href="/{{c_for}}">{{c_for}}</a> > <a href="{{category.id}}">{{category}}</a></p>
     <h1 class="heading"> <span>{{category}}</span> products </h1>
 
     <div class="box-container">
@@ -72,7 +72,7 @@
                 {% else %}
                 <button data-product={{i.id}} data-action="add" class="btn update-cart">add to cart</button>
                 {% endif %}
-                <a href="{% url 'product_view' i.id %}"><button class="btn">View</button></a>
+                <a href="{% url 'store:product_view' i.id %}"><button class="btn">View</button></a>
             </div>
         </div>
         {% endfor %}

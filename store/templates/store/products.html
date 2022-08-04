@@ -9,14 +9,14 @@
           <p>Product added in last 7 days: </p>
           <div class="product_week" style="height: 50px; overflow: auto;">
             {% for i in product_week %}
-            <a href="{% url 'product_view' i.id %}" class="btn btn-outline-info" style="margin-top: 5px;">{{i.name}}</a>
+            <a href="{% url 'store:product_view' i.id %}" class="btn btn-outline-info" style="margin-top: 5px;">{{i.name}}</a>
             {% endfor %}
           </div><br>
           <p>Top Reviewed Product: </p>
           <div class="top_reviewed" style="height: 50px; overflow: auto;">
             {% for i in top_reviewed %}
             {% if i.rate >= 3 %}
-            <a href="{% url 'product_view' i.id %}" class="btn btn-outline-info" style="margin-top: 5px;"><strong>{{i.name}}</strong>: {{i.rate|floatformat:1}}&#9733;</a>
+            <a href="{% url 'store:product_view' i.id %}" class="btn btn-outline-info" style="margin-top: 5px;"><strong>{{i.name}}</strong>: {{i.rate|floatformat:1}}&#9733;</a>
             {% endif %}
             {% endfor %}
           </div>
@@ -41,7 +41,7 @@
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-search"></a>
-                    <a href="{% url 'product_view' j.id %}" class="fas fa-eye"></a>
+                    <a href="{% url 'store:product_view' j.id %}" class="fas fa-eye"></a>
                 </div>
                 <div class="image">
                     {% for k in j.images %}

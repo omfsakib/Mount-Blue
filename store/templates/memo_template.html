@@ -1,0 +1,140 @@
+{% load widget_tweaks %}
+{% load static %}
+
+<br>
+<section class="view_order" id="memo"> 
+    <style>
+    
+        .order_memo{
+            border: 1px solid rgb(195 195 195);
+        }
+        .header h1{
+            color: blue;
+            font-weight: bolder;
+        }
+        .header .shop-address{
+            font-style: italic;
+        }
+        .header h1,
+        .header p{
+            text-transform: none;
+        }
+        .content .order_id{
+            float: left;
+            display: inline-block;
+        }
+        .content .order_date{
+            float: right;
+            display: inline-block;
+        }
+        .order_info{
+            min-height: 400px;
+        }
+        .order_info .table thead tr th,
+        .order_info .table tr td{
+            font-size: 1.2em;
+    
+        }
+        .order_info .table tr td{
+            border-bottom: 0px;
+            border-top: 0px;
+        }
+        .aprroval .sign-1{
+            float: left;
+            display: inline-block;
+        }
+        .aprroval .sign-2{
+            float: right;
+            display: inline-block;
+            margin-right: 150px;
+        }
+        .powered_by p{
+            margin-top: 80px;
+        }
+    </style>
+    <div class="order_memo" style="background-color: #fff;">
+        <div class="container-fluid"> <br>
+            <div class="header text-center">
+                <h1>{{ shop.user.first_name }} {{ shop.user.last_name }}</h1>
+                <p class="shop-address">{{shop.address}}</p>
+                <p>Mobile : +88{{shop.phone}}, E-mail : {{shop.user.email}}</p>
+            </div>
+            <div class="content">
+                <p class="order_id">Memo No. {{order.id}}</p> <p class="order_date">Date : {{order.date_added}}</p><br><br><br>
+                <p>Name : {% if order.customer.user.first_name %} {{order.customer.user.first_name}} {{order.customer.user.last_name}} {% else %} ........................................................{% endif %}</p>
+                <p>Address :{% if address %} {{address.address}}, {{address.city}}, {{address.state}} {%else%} ........................................................{%endif%}</p>
+            </div><br><br>
+            <div class="order_info">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Description of Goods</th>
+                            <th>Size</th>
+                            <th>Color</th>
+                            <th>Qty.</th>
+                            <th>Rate</th>
+                            <th>Taka</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in orders %}
+                        <tr>
+                            <td></td>
+                            <td>{{i.product.name}}</td>
+                            <td>{%if i.size%}{{i.size}}{%endif%}</td>
+                            <td>{%if i.color%}{{i.color}}{%endif%}</td>
+                            <td>{{i.quantity}}</td>
+                            <td>{{i.rate}}</td>
+                            <td>{{i.total}}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if order.delivery_fee %}
+                        <tr>
+                            <td></td>
+                            <td>Delivery fee</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{order.delivery_fee}}</td>
+                            <td>{{order.delivery_fee}}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td colspan="7"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="7"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5"></td>
+                            <td>Total</td>
+                            <td> {{order.total}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5"></td>
+                            <td>Paid </td>
+                            <td>{{order.advance}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5"></td>
+                            <td>Due</td>
+                            <td> {{order.due}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="aprroval">
+                    <p>Tk in word : ........................................................</p>
+                    <hr> <br>
+                    <p class="sign-1">Receiver's Signature :</p>
+                    <p class="sign-2">From - {{ shop.user.first_name }} {{ shop.user.last_name }} :</p>
+                </div>
+                <div class="powered_by text-center">
+                    <p>Powered By <a href="{% url 'store:store' %}">ghorebahirebd.com</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</section>

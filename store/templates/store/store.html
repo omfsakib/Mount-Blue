@@ -65,7 +65,7 @@
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-search"></a>
-                    <a href="{% url 'product_view' i.id %}" class="fas fa-eye"></a>
+                    <a href="{% url 'store:product_view' i.id %}" class="fas fa-eye"></a>
                 </div>
                 <div class="image">
                     {% for j in i.images %}
@@ -138,7 +138,7 @@
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-search"></a>
-                    <a href="#" class="fas fa-eye"></a>
+                    <a href="{% url 'store:product_view' j.id %}" class="fas fa-eye"></a>
                 </div>
                 <div class="image">
                     {% for i in j.images %}

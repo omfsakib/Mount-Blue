@@ -39,7 +39,7 @@
                     <td>#{{ order.transaction_id }}</td>
                     <td>{{ order.date_added }}</td>
                     <td>{{ order.status }}</td>
-                    <td><a class="btn btn-sm btn-info" href="{% url 'view_order' order.id %}">Update</a></td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'store:update_order' order.id %}">Update</a></td>
                     
                 </tr> 
                 {% endfor %}

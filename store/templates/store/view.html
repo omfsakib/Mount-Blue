@@ -257,7 +257,7 @@
               {% endif %}
               </p>
               {% if request.user.customer == i.user %}
-                <a href="{% url 'delete_review' i.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                <a href="{% url 'store:delete_review' i.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
               {% endif %}
                <hr>
           {% endfor %}

@@ -1,0 +1,73 @@
+{% extends 'shop/main.html' %}
+
+{% block head %}
+
+<script>
+    $(function () {
+        $("select").select2();
+    });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.full.min.js"></script>
+
+<style>
+
+@import url(https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css);
+</style>
+<style>
+    .input-style{
+        width:170px;
+        float: left;
+        margin-right: 10px;
+    }
+    .select-style{
+        max-width: 300px;
+        margin-top: 10px;
+        display: inline-block;
+
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<section class="container"> <br>
+    <div class="product-form">
+        <h3>Select Product :</h3>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <select name="product" id="product" class="form-control select-style" >
+                <option value="">Select Product..</option>
+                {% for i in products %}
+                    <option value="{{i.id}}">{{i.name}}</option>
+                {% endfor %}
+              </select>
+            
+            <input type="number" placeholder="quantity" class="form-control select-style" name="quantity" id="quantity"> <br>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+    </div> <br>
+    <div class="payment-details">
+        <h3>Paid : </h3>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="number" id="paid" class="form-control input-style" name="amount" placeholder="Paid amount..."/>
+            <button type="submit" class="btn btn-outline-info">Paid</button>
+        </form>
+    </div>
+    
+    {% include 'memo_template.html' %} <br>
+    {% if order %}
+    <div class="order-edit">
+        <a href="{% url 'store:delete_order' order.id %}" style="float: left; margin-right: 10px;" class="btn btn-danger">Delete</a>
+        <form action="" method="POST" style="float: left; margin-right: 10px;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success" name="save">Save</button>
+        </form>
+
+    </div> <br><br>
+    {% endif %}
+</section>
+
+{% endblock %}

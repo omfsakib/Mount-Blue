@@ -8,6 +8,8 @@ from django.contrib.auth.views import (
     PasswordResetCompleteView
 )
 
+app_name = 'store'
+
 urlpatterns = [
     path('register/',views.registerPage,name="register"),
     path('login/',views.loginPage,name="login"),
@@ -36,6 +38,9 @@ urlpatterns = [
     path('view_shop/<str:pk>/',views.view_shops,name="view_shop"),
     path('user/dashboard/',views.userDashboard,name='user-page'),
     path('view_order/<str:pk>/',views.viewOrder,name='view_order'),
+    path('update_order/<str:pk>/',views.updateOrder,name='update_order'),
+    path('shop/offline-order/',views.offlineOrder,name="offline-order"),
+    path('shop/offline-order/memoPrint/<str:pk>',views.memoPrint,name="memo-print"),
     path('cart/',views.cart,name="cart"),
     path('checkout/',views.checkout,name="checkout"),
     path('products/',views.products,name="products"),

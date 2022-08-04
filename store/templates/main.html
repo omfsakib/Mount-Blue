@@ -120,7 +120,7 @@
 
 <header>
 
-    <a href="{% url 'store' %}" class="logo">Ghore Bahire<span>.</span></a>
+    <a href="{% url 'store:store' %}" class="logo">Ghore Bahire<span>.</span></a>
 
     <form action="">
         <input  type="search" onkeyup="productFunction()" id="search-bar">
@@ -131,9 +131,9 @@
         <div id="menu-bar" class="fas fa-bars"></div>
         <div id="theme-toggler" class="fas fa-moon"></div>
         <a href="#" class="fas fa-heart"></a>
-        <a href="{% url 'cart' %}" class="fas fa-shopping-cart"><p id="cart-total">{{cartItems}}</p></a>
+        <a href="{% url 'store:cart' %}" class="fas fa-shopping-cart"><p id="cart-total">{{cartItems}}</p></a>
         
-        <a href="{% url 'account' %}" class="fas fa-user"></a>
+        <a href="{% url 'store:account' %}" class="fas fa-user"></a>
     </div>
 
 </header>
@@ -148,18 +148,18 @@
         {% if request.user.is_authenticated %}
         <img src="{{request.user.customer.profile_pic.url}}" alt="">
         <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'store:logout' %}">Logout</a>
         {% else %}
         <img src="{% static '/images/profile.png' %}" alt="">
-        <h3><a href="{% url 'login' %}">Login/SignUp</a></h3> 
+        <h3><a href="{% url 'store:login' %}">Login/SignUp</a></h3> 
         {% endif %}
     </div>
 
     <div class="links">
-        <a href="{% url 'store' %}">home</a>
-        <a href="{% url 'products' %}">products</a>
-        <a href="{% url 'shops' %}">shops</a>
-        <a href="{% url 'user-page' %}">Dashboard</a>
+        <a href="{% url 'store:store' %}">home</a>
+        <a href="{% url 'store:products' %}">products</a>
+        <a href="{% url 'store:shops' %}">shops</a>
+        <a href="{% url 'store:user-page' %}">Dashboard</a>
     </div>
 
     <div id="close" class="fas fa-times"></div>

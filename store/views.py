@@ -114,7 +114,7 @@ def loginPage(request):
 
         if user is not None:
             login(request,user)
-            return redirect('store')
+            return redirect('store:store')
         else:
             messages.info(request,'Username or Password is incorrect')
     context = {}
@@ -122,7 +122,7 @@ def loginPage(request):
 
 def logoutUser(request):
     logout(request)
-    return redirect('login')
+    return redirect('store:login')
 
 @login_required(login_url='login')
 def viewAccount(request, pk = None):
@@ -561,7 +561,7 @@ def productView(request,pk):
         form = ReviewForm(request.POST)
         form.save()
         messages.success(request, 'Review Added')
-        return redirect(reverse('view', kwargs={'pk':pk}))
+        return redirect(reverse('store:view', kwargs={'pk':pk}))
     
     else:
         form = ReviewForm()
@@ -733,40 +733,45 @@ def userDashboard(request):
 
 @login_required(login_url='login')
 def viewOrder(request,pk):
-    group = request.user.groups.all()[0].name
     order_y = Order.objects.get(id = pk)
     shop = order_y.shop
     orders = OrderItem.objects.filter(order = order_y)
     address = ShippingAddress.objects.get(order=order_y)
-    if group == 'customer': 
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, complete=False)
-            cartItems = order.get_cart_items
-        else:
-            cookieData = cookieCart(request)
-            cartItems = cookieData['cartItems']
-        context = {'order':order_y,'orders':orders,'address':address,'cartItems':cartItems,'shop':shop}
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        cartItems = order.get_cart_items
     else:
-        form = UpdateOrderForm(instance=order_y)
-        if request.method =='POST':
-            form = UpdateOrderForm(request.POST,instance=order_y)
-            if form.is_valid():
-                form.save()
-                if order_y.status == 'Delivered':
-                    for i in orders:
-                        i.product.stock -= 1
-                        i.product.save()
-                
-                elif order_y.status == 'Take':
-                    order_y.taken_user = request.user
-                    order_y.save()
-                    return redirect('/track_order')
+        cookieData = cookieCart(request)
+        cartItems = cookieData['cartItems']
 
-                return redirect('/')
-        context = {'order':order_y,'orders':orders,'address':address,'shop':shop,'form':form,}
-
+    context = {'order':order_y,'orders':orders,'address':address,'cartItems':cartItems,'shop':shop}
     return render(request,'store/view_order.html',context)
+
+def updateOrder(request,pk):
+    order_y = Order.objects.get(id = pk)
+    shop = order_y.shop
+    orders = OrderItem.objects.filter(order = order_y)
+    address = ShippingAddress.objects.get(order=order_y)
+    form = UpdateOrderForm(instance=order_y)
+    if request.method =='POST':
+        form = UpdateOrderForm(request.POST,instance=order_y)
+        if form.is_valid():
+            form.save()
+            if order_y.status == 'Delivered':
+                for i in orders:
+                    i.product.stock -= 1
+                    i.product.save()
+            
+            elif order_y.status == 'Take':
+                order_y.taken_user = request.user
+                order_y.save()
+                return redirect('/track_order')
+
+            return redirect('/')
+    context = {'order':order_y,'orders':orders,'address':address,'shop':shop,'form':form,}
+
+    return render(request,'shop/update_order.html',context)
 
 @login_required(login_url='login')
 def deleteOrder(request, pk):
@@ -780,6 +785,7 @@ def deleteOrder(request, pk):
     return render(request,'store/delete.html',context)
 
 @login_required(login_url='login')
+@shopowner_only
 def home(request):
     shopowner = request.user.shopowner
     order = Order.objects.filter(complete=True)
@@ -794,3 +800,93 @@ def home(request):
 
     return render(request,'shop/dashboard.html',context)
 
+@login_required(login_url='login')
+@shopowner_only
+def offlineOrder(request):
+    shop = request.user.shopowner
+    products = Product.objects.filter(shopowner=shop)
+    total_products = products.count()
+    if total_products <= 0:
+        return redirect('store:home')
+
+    
+    if request.method == 'POST' and 'product' in request.POST:
+        item = request.POST.get('product')
+        quantity = request.POST.get('quantity')
+        product = Product.objects.get(id = item)
+        order, created = Order.objects.get_or_create(shop=shop, complete=False)
+        orderItem, created = OrderItem.objects.get_or_create( order=order,shop=shop,  product=product, status='pending')
+        orderItem.quantity = quantity
+
+        orderItem.rate = product.price
+        orderItem.total = int(orderItem.quantity) * product.price
+
+        order.save()
+
+        orderItem.save()
+        return redirect('store:offline-order')   
+    
+    if request.method == 'POST' and 'save' in request.POST:
+        order_x = Order.objects.get(shop=shop, complete=False)
+        order_x.complete = True
+        order_x.status = "Delivered"
+        order_x.save()
+        orderItem_x = OrderItem.objects.filter(order = order_x)
+        for i in orderItem_x:
+            i.status = "Delivered"
+            i.product.stock -= 1
+            i.product.save()
+            i.save()
+        return redirect('store:memo-print', pk=order_x.id)
+    
+    if request.method == 'POST' and 'amount' in request.POST:
+        amount = request.POST.get('amount')
+        order_z = Order.objects.get(shop=shop, complete=False)
+        order_z.advance = float(amount)
+        order_z.due = float(order_z.total) - float(order_z.advance)
+        order_z.save()
+    
+    order_check = Order.objects.filter(shop=shop, complete=False).count()
+    if order_check == 0:
+        context ={
+            'shop':shop,
+            'products':products,
+        }
+    else:
+        order_y = Order.objects.get(shop=shop, complete=False)
+        orders = OrderItem.objects.filter(order = order_y)
+        total = 0
+        for i in orders:
+            total += i.total
+            order_y.total = total
+            order_y.due = total - float(order_y.advance)
+            order_y.save()
+    
+
+
+        context ={
+            'order':order_y,
+            'orders':orders,
+            'shop':shop,
+            'products':products,
+        }
+    return render(request,'shop/offlineOrder.html',context)
+
+
+@login_required(login_url='login')
+@shopowner_only
+def memoPrint(request,pk):
+    order_y = Order.objects.get(id = pk)
+    shop = order_y.shop
+    orders = OrderItem.objects.filter(order = order_y)
+    address_check  = ShippingAddress.objects.filter(order=order_y).count()
+    if address_check >0 :
+        address = ShippingAddress.objects.get(order=order_y)
+        context ={
+            'order':order_y,'orders':orders,'address':address,'shop':shop,
+        }
+    else:
+         context ={
+            'order':order_y,'orders':orders,'shop':shop,
+        }
+    return render(request,'shop/memoPrint.html',context)

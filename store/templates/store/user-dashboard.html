@@ -47,7 +47,7 @@
 </div>
 <div class="row">
     <div class="col-md">
-        <div class="card card-body">
+        <div class="card card-body " >
             <table class="table table-sm paginated">
                 <thead>
                 <tr>
@@ -65,8 +65,8 @@
                     <th>#{{order.transaction_id}}</th>
                     <th>{{order.date_added}}</th>
                     <th>{{order.status}}</th>
-                    <td><a class="btn btn-sm btn-info" href="{% url 'view_order' order.id %}">View</a></td>
-                    <td><a class="btn btn-sm btn-danger" href="{% url 'delete_order' order.id %}">Delete</a></td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'store:view_order' order.id %}">View</a></td>
+                    <td><a class="btn btn-sm btn-danger" href="{% url 'store:delete_order' order.id %}">Delete</a></td>
                 </tr>
                 {% endfor %}
             </table>

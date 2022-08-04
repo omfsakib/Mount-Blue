@@ -30,7 +30,7 @@ h6{
                     <img class="thumbnail" src="{{ shop.profile_pic.url }}" alt="">
                     <div class="box-element product">
                       <h6><strong>{{ shop.user.first_name }} {{ shop.user.last_name }}</strong></h6><hr>
-                      <a href="{% url 'view_shop' shop.id %}" class="btn btn-outline-success">View</a>
+                      <a href="{% url 'store:view_shop' shop.id %}" class="btn btn-outline-success">View</a>
                     </div>
                   </div>
             </div>

@@ -1,0 +1,26 @@
+{% extends 'shop/main.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+{% include 'memo_template.html' %}
+{% if request.user.is_staff %}
+    <div class="update_order">
+        <div class="row">
+            <div class="col-md-12">
+                <hr>
+                <h2>Update Order</h2><hr><br>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                        <p style="display: none;">{{form.product|add_class:'form-control'}}</p>
+                        <p>{{form.status|add_class:'form-control'}}</p>
+                        <p><input class="btn btn-primary"  type="submit" ></p>
+                    <hr>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="order-manual">
+        <a href="{% url 'store:delete_order' order.id %}" class="btn btn-danger">Delete order</a>
+    </div>
+{% endblock %}

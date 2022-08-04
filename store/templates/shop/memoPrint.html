@@ -1,0 +1,20 @@
+{% extends 'shop/main.html' %}
+{% block head %}
+<script>
+    function printDiv(divName) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+
+     document.body.innerHTML = printContents;
+
+     window.print();
+
+     document.body.innerHTML = originalContents;
+}
+</script>
+{% endblock %}
+{% block content %}
+<br><br> 
+<button class="btn btn-lg btn-info" onclick="printDiv('memo')" style="float: right;">Print</button> <br><br>
+{% include 'memo_template.html' %}
+{% endblock %}

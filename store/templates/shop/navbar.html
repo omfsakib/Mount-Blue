@@ -40,23 +40,26 @@
       <ul class="navbar-nav">
         {% if request.user.is_staff%}
         <li class="nav-item active">
-          <a class="nav-link" href="{% url 'home' %}">Dashboard</a>
+          <a class="nav-link" href="{% url 'store:home' %}">Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'products' %}">Products</a>
+          <a class="nav-link" href="{% url 'store:products' %}">Products</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'account' %}">Profile</a>
+          <a class="nav-link" href="{% url 'store:account' %}">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'store:offline-order' %}">Offline order</a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'user-page' %}">Dashboard</a>
+          <a class="nav-link" href="{% url 'store:user-page' %}">Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'account' %}">Profile</a>
+          <a class="nav-link" href="{% url 'store:account' %}">Profile</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'ongoing_order' %}">Ongoing Order</a>
+          <a class="nav-link" href="{% url 'store:ongoing_order' %}">Ongoing Order</a>
         </li>
         <li class="nav-item">
           <div id="google_element"></div>
@@ -66,15 +69,15 @@
     </div>
     {% if not request.user.is_staff %}
     <div class="form-inline my-2 my-lg-0">
-      <a href="{% url 'cart' %}"><img src="{% static 'images/cart.png' %}" alt="" id="cart-icon"></a>
+      <a href="{% url 'store:cart' %}"><img src="{% static 'images/cart.png' %}" alt="" id="cart-icon"></a>
       <p id="cart-total">{{cartItems}}</p>
 
     </div><br>
     {% endif %} 
     {% if request.user.is_authenticated %}
     <span class="hello-msg">Hello, {{request.user.first_name}}</span>
-    <span ><a class="hello-msg" href="{% url 'logout' %}">Logout</a></span>
+    <span ><a class="hello-msg" href="{% url 'store:logout' %}">Logout</a></span>
     {% else %}
-    <span ><a class="hello-msg" href="{% url 'login' %}">Login</a></span>
+    <span ><a class="hello-msg" href="{% url 'store:login' %}">Login</a></span>
     {% endif %}
   </nav>
