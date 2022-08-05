@@ -40,6 +40,7 @@ urlpatterns = [
     path('view_order/<str:pk>/',views.viewOrder,name='view_order'),
     path('update_order/<str:pk>/',views.updateOrder,name='update_order'),
     path('shop/offline-order/',views.offlineOrder,name="offline-order"),
+    path('shop/add-product/',views.addProducts,name="add-product"),
     path('shop/offline-order/memoPrint/<str:pk>',views.memoPrint,name="memo-print"),
     path('cart/',views.cart,name="cart"),
     path('checkout/',views.checkout,name="checkout"),

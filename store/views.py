@@ -890,3 +890,53 @@ def memoPrint(request,pk):
             'order':order_y,'orders':orders,'shop':shop,
         }
     return render(request,'shop/memoPrint.html',context)
+
+
+@login_required(login_url='login')
+@shopowner_only
+def addProducts(request):
+    shopowner = request.user.shopowner
+    products = Product.objects.filter(shopowner = shopowner)
+    form = ProductForm()
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+        images = request.FILES.getlist('images')
+        total_images = len(images)
+        if total_images > 3:
+            messages.info(request,'You cannot upload more than 3 images!')
+            return redirect('store:add-product')
+        category = request.POST.getlist('category')
+        color = request.POST.getlist('color')
+        size = request.POST.getlist('size')
+        stock = request.POST.get('stock')
+        description = request.POST.get('description')
+
+        print(images)
+        product = Product.objects.create(
+            shopowner = shopowner,
+            name = name,
+            price = price,
+            stock = stock,
+            description = description
+        )
+        for i in category:
+            product.category.add(i)
+        for i in color:
+            product.color.add(i)
+        for i in size:
+            product.size.add(i)
+        for i in images:
+            image = ProductImages.objects.create( product = product, img= i)
+        
+        product.save()
+        
+        
+        messages.success(request,'Product added ..')
+            
+        return redirect('store:add-product')
+            
+
+    context ={'products':products,'form':form}
+    return render(request,'shop/products.html',context)

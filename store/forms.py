@@ -36,6 +36,14 @@ class ProductForm(ModelForm):
             queryset=Category.objects.all(),
             widget=forms.CheckboxSelectMultiple,
             required=True)
+    color = forms.ModelMultipleChoiceField(
+            queryset=Color.objects.all(),
+            widget=forms.CheckboxSelectMultiple,
+            required=True)
+    size = forms.ModelMultipleChoiceField(
+            queryset=Size.objects.all(),
+            widget=forms.CheckboxSelectMultiple,
+            required=True)
     
     class Meta:
         model = Product
