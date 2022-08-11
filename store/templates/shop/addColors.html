@@ -1,0 +1,21 @@
+{% extends 'shop/main.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block main %} <br>
+<div class="container">
+    <div class="row"> 
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <div class="card card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <label for="id_color">Enter New Color :</label>
+                    {{form.color|add_class:'form-control'}} 
+                    <input style="margin-top: 20px;" type="submit" class="btn btn-success">
+                </form>
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+{% endblock %}

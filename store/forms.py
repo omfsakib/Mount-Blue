@@ -30,7 +30,6 @@ class UpdateOrderForm(ModelForm):
 class ProductForm(ModelForm):
     name = forms.CharField(label='Product Name',widget=forms.TextInput(attrs={'placeholder': 'Product Name'}))
     price = forms.FloatField(label='Price',widget=forms.TextInput(attrs={'placeholder': 'Price'}))
-    quantity = forms.CharField(label='Quantity',widget=forms.TextInput(attrs={'placeholder': 'Quantity'}))
     description = forms.CharField(max_length=2000,label='Description',widget=forms.Textarea(attrs={'placeholder': 'Description'}))
     category = forms.ModelMultipleChoiceField(
             queryset=Category.objects.all(),
@@ -62,6 +61,11 @@ class UpdateProfileForm(UserChangeForm):
 class CategoryForm(ModelForm):
     class Meta:
         model = Category
+        fields = '__all__'
+
+class ColorForm(ModelForm):
+    class Meta:
+        model = Color
         fields = '__all__'
 
 class ReviewForm(ModelForm):

@@ -1,0 +1,103 @@
+{% extends request.user.is_staff|yesno:"shop/main.html,main.html" %}
+{% load widget_tweaks %}
+
+{% block head %}
+
+<style>
+    #total-orders{
+        background-color: #4cb4c7;
+    }
+    #orders-delivered{
+        background-color: #7abecc;
+    }
+    #orders-pending{
+        background-color: #7CD1C0;
+    }
+    .filter-form{
+        width: 170px;
+        display: inline-block;
+        margin-right: 20px;
+    }
+    .filter-form:last-child{
+        width: 77px;
+    }
+</style>
+<script>
+function myFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+
+{% endblock %}
+
+{% block main %}
+
+{% include 'status.html' %} <br>
+<div class="row">
+    <div class="col">
+        <div class="card card-body" style="align-items: center;">
+            <div class="text-center">
+                <h3>Filter Order</h3>
+                <hr>
+            </div>
+            <form method="get">
+                <p class="filter-form">Status: <br><br>{{ myFilter.form.status|add_class:'form-control' }}</p>
+                <p class="filter-form">Start Date: <br><br><input class="form-control" type="date" name="start_date" id="id_start_date"></p>
+                <p class="filter-form">End Date: <br><br><input class="form-control" type="date" name="end_date" id="id_end_date"></p>
+                <p class="filter-form"><br><br><input class="btn btn-primary"  type="submit" name="Search" ></p>
+            </form>
+        </div>
+    </div>
+</div> <br>
+<div class="row">
+    <div class="col-md-12">
+        <input id="myInput" class="form-control" onkeyup="myFunction()" type="text" placeholder="Search..">
+        <br><br>
+        <div class="card card-body">
+            <table class="table table-sm paginated">
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Tracking ID</th>
+                    <th>Date Ordered</th>
+                    <th>Status</th>
+                    <th>Update</th>
+                </tr>
+                </thead>
+                <tbody id="myTable">
+                {% for order in orders %}
+                
+                <tr> 
+                    <td>#{{ order.id }}</td>
+                    <td>{% if order.transaction_id %} #{{order.transaction_id}} {% else %} Offline Order {% endif %} </td>
+                    <td>{{ order.date_added }}</td>
+                    <td>{{ order.status }}</td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'store:update_order' order.id %}">Update</a></td>
+                    
+                </tr> 
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

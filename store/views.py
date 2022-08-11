@@ -140,6 +140,7 @@ def viewAccount(request, pk = None):
         user = User.objects.get(pk=pk)
     else:
         user = request.user
+    print(user)
     args = {'cartItems':cartItems,'user':user}
     return render(request,'accounts/account.html',args)
 
@@ -455,7 +456,7 @@ def updateItem(request):
     customer = request.user.customer
     product = Product.objects.get(id=productId)
     shopowner = product.shopowner
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    order, created = Order.objects.get_or_create(customer=customer,shop=shopowner, complete=False)
 
     orderItem, created = OrderItem.objects.get_or_create(customer=customer, order=order,shop=shopowner,  product=product, status='Pending')
     orderItem.rate = product.price
@@ -788,8 +789,8 @@ def deleteOrder(request, pk):
 @shopowner_only
 def home(request):
     shopowner = request.user.shopowner
-    order = Order.objects.filter(complete=True)
-    orders = Order.objects.filter(complete=True,status='Pending')
+    order = Order.objects.filter(complete=True, shop=shopowner)
+    orders = Order.objects.filter(complete=True, shop=shopowner,status='Pending').order_by('-date_created')
     total_orders = order.count()
     delivered = order.filter(status='Delivered').count()
     pending = order.filter(status='Pending').count()
@@ -896,7 +897,6 @@ def memoPrint(request,pk):
 @shopowner_only
 def addProducts(request):
     shopowner = request.user.shopowner
-    products = Product.objects.filter(shopowner = shopowner)
     form = ProductForm()
     
     if request.method == 'POST':
@@ -913,7 +913,6 @@ def addProducts(request):
         stock = request.POST.get('stock')
         description = request.POST.get('description')
 
-        print(images)
         product = Product.objects.create(
             shopowner = shopowner,
             name = name,
@@ -938,5 +937,175 @@ def addProducts(request):
         return redirect('store:add-product')
             
 
-    context ={'products':products,'form':form}
+    context ={'form':form}
+    return render(request,'shop/addProducts.html',context)
+
+@login_required(login_url='login')
+@shopowner_only
+def shopProducts(request):
+    shopowner = request.user.shopowner
+    products = Product.objects.filter(shopowner = shopowner)
+
+    context={
+        'products':products
+    }
     return render(request,'shop/products.html',context)
+
+
+@login_required(login_url='login')
+def totalOrders(request):
+    try:
+        user = request.user.customer
+        orders = Order.objects.filter(complete=True, customer=user).order_by('-date_created')
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            cartItems = order.get_cart_items
+        else:
+            cookieData = cookieCart(request)
+            cartItems = cookieData['cartItems']
+    except:
+        user = request.user.shopowner
+        orders = Order.objects.filter(complete=True, shop=user).order_by('-date_created')
+        cartItems = 0
+
+    total_orders = orders.count()
+    delivered = orders.filter(status='Delivered').count()
+    pending = orders.filter(status='Pending').count()
+
+    myFilter = OrderFilter(request.GET,queryset=orders)
+    orders = myFilter.qs
+
+    context = {
+        'orders':orders,
+        'total_orders':total_orders,
+        'delivered':delivered,
+        'pending':pending,
+        'myFilter':myFilter,
+        'cartItems':cartItems,
+
+    }
+    return render(request,'totalOrders.html',context)
+
+@login_required(login_url='login')
+@shopowner_only
+@allowed_users(allowed_roles=['shopowner'])
+def addColors(request):
+    form = ColorForm()
+    if request.method == "POST":
+        form =  ColorForm(request.POST)
+        if form.is_valid:
+            form.save()
+        else:
+            form = ColorForm()
+
+        return redirect('store:shop-product')
+    
+    context = {
+        'form':form
+    }
+    return render(request,'shop/addColors.html',context)
+
+
+@login_required(login_url='login')
+@shopowner_only
+@allowed_users(allowed_roles=['shopowner'])
+def shopProductView(request,pk):
+    product = Product.objects.get(id = pk)
+    demo_price = float(product.price) + float(product.discount_amount)
+    category = product.category.all()
+    size = product.size.all()
+    color = product.color.all()
+    images = ProductImages.objects.filter(product=product)
+    big_image = ProductImages.objects.filter(product = product)[:1]
+    if request.method == 'POST' and 'stock' in request.POST:
+        stock =  request.POST.get('stock')
+        product.stock += int(stock)
+        product.save()
+        return redirect(reverse('store:shop-product-view', kwargs={'pk':pk}))
+
+    if request.method == 'POST' and 'discount' in request.POST:
+        if product.discount > 0:
+            return redirect(reverse('store:shop-product-view', kwargs={'pk':pk}))
+        discount =  int(request.POST.get('discount'))
+        discount_amount = product.price * (discount/100)
+        product.price -= discount_amount
+        product.discount = discount
+        product.discount_amount = discount_amount
+        product.save()
+        return redirect(reverse('store:shop-product-view', kwargs={'pk':pk}))
+
+    if request.method == 'POST' and 'discount_amount' in request.POST:
+        product.price += product.discount_amount
+        product.discount = 0
+        product.discount_amount = 0
+        product.save()
+        return redirect(reverse('store:shop-product-view', kwargs={'pk':pk}))
+
+    context ={
+        'demo_price':demo_price,
+        'size':size,
+        'color':color,
+        'category':category,
+        'product':product,
+        'images':images,
+        'big_image':big_image
+    }
+    return render(request,'shop/productView.html',context)
+
+
+@login_required(login_url='login')
+@shopowner_only
+@allowed_users(allowed_roles=['shopowner'])
+def shopProductEdit(request,pk):
+    product = Product.objects.get(id = pk)
+    images = ProductImages.objects.filter(product = product)
+    total_images = images.count()
+    form = ProductForm(instance=product)
+    if request.method == "POST" and 'name' in request.POST:
+        form = ProductForm(request.POST,instance=product)
+        if form.is_valid():
+            form.save()
+            product.shopowner = request.user.shopowner
+            product.quantity = ""
+            product.save()
+            return redirect(reverse('store:shop-product-view', kwargs={'pk':pk}))
+        else:
+            print(form.errors)
+            form = ProductForm(instance=product)
+    
+    if request.method == "POST" and 'remove' in request.POST:
+        for i in images:
+            i.delete()
+        return redirect(reverse('store:shop-product-edit', kwargs={'pk':pk}))
+    
+    
+    if request.method == "POST" and 'images' in request.POST:
+        images =  request.POST.getlist('images')
+        total_img = len(images)
+        in_total = int(total_images) + int(total_img)
+        if in_total > 3:
+            return redirect(reverse('store:shop-product-edit', kwargs={'pk':pk}))
+        else:
+            for i in images:
+                images = ProductImages.objects.create(product = product,img=i)
+        
+        return redirect(reverse('store:shop-product-edit', kwargs={'pk':pk}))
+        
+
+    if total_images > 0: 
+        big_image = ProductImages.objects.filter(product = product)[:1]
+        context= {
+            'total_images':total_images,
+            'big_image':big_image,
+            'product':product,
+            'images':images,
+            'form':form
+        }
+    
+    else:
+        context= {
+            'product':product,
+            'form':form
+        }
+    return render(request,'shop/productEdit.html',context)

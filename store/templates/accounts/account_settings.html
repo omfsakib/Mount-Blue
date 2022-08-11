@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends request.user.is_staff|yesno:"shop/main.html,main.html" %}
 {% load widget_tweaks %}
 {% load static %}
 {% block main %}

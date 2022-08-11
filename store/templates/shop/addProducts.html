@@ -1,0 +1,154 @@
+{% extends 'shop/main.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block head %}
+<style>
+    .product-form{
+        width: 170px;
+        float: left;
+        display: inline-block;
+        margin-right: 20px;
+    }
+    .dropdown-menu ul li{
+        list-style: none;
+    }
+    .dropdown{
+        display: inline-block;
+        margin-right: 20px;
+    }
+    #myInput {
+        background-image: url("{% static '/images/searchicon.png' %}"); 
+        background-position: 10px 12px; 
+        background-repeat: no-repeat; 
+        width: 100%;
+        font-size: 16px;
+        padding: 12px 20px 12px 40px;
+        border: 1px solid #ddd; 
+        margin-bottom: 12px;
+        margin-top: -10px;
+    }
+</style>
+<script>
+   function categoryFunction() {
+      var input, filter, ul, li, a, i, txtValue;
+      input = document.getElementById('categoryInput');
+      filter = input.value.toUpperCase();
+      ul = document.getElementById("id_category");
+      li = ul.getElementsByTagName('div');
+    
+      for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("label")[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "";
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+    }
+
+    function tagFunction() {
+      var input, filter, ul, li, a, i, txtValue;
+      input = document.getElementById('tagInput');
+      filter = input.value.toUpperCase();
+      ul = document.getElementById("id_size");
+      li = ul.getElementsByTagName('div');
+    
+      for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("label")[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "";
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+    }
+    function colorFunction() {
+      var input, filter, ul, li, a, i, txtValue;
+      input = document.getElementById('colorInput');
+      filter = input.value.toUpperCase();
+      ul = document.getElementById("id_color");
+      li = ul.getElementsByTagName('div');
+    
+      for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("label")[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "";
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+    }
+
+
+    </script>
+{%endblock%}
+{% block main %}
+
+    <br>
+
+    <div class="row">
+        <div class="col-md">
+<div class="card card-body">
+    <h5>Products</h5>
+</div>
+<div class="card card-body">
+    <form action="" method="POST" enctype='multipart/form-data'>
+        {% csrf_token %}
+        <input type="hidden" name="shopowner" value="{{request.user.shopowner.id}}">
+        <p class="product-form">
+            <label for="id_name"></label>
+            {{ form.name|add_class:'form-control' }}
+        </p>
+        <p class="product-form">
+            <label for="id_file"></label>
+            <input type="file" multiple id="id_file" class="form-control" name="images">
+        </p>
+        <p class="product-form">
+            <label for="id_price"></label>
+            {{ form.price|add_class:'form-control' }}
+        </p>
+        <p class="product-form">
+            <label for="id_stock">In Stock : </label>
+            {{ form.stock|add_class:'form-control' }}
+        </p>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Select Category
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <input class="form-control" type="text" id="categoryInput" onkeyup="categoryFunction()" placeholder="Search tags">
+                    {{form.category}}
+                </div>
+              </div>
+        <p class="product-form">
+            <textarea name="description" cols="40" rows="10" placeholder="Description" class="form-control" required="" id="id_description" style="margin-top: 0px; margin-bottom: 0px; height: 73px;"></textarea>
+        </p>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Select Size
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <input class="form-control" type="text" id="tagInput" onkeyup="tagFunction()" placeholder="Search tags">
+                    {{form.size}}
+                </div>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Select Color
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <input class="form-control" type="text" id="colorInput" onkeyup="colorFunction()" placeholder="Search tags">
+                    {{form.color}}
+                </div>
+              </div>
+        <input class="btn btn-warning" type="submit" name='Add'>
+    </form>
+</div>
+
+</div>
+</div>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'shop/main.html' %}
 {% load widget_tweaks %}
 {% load static %}
-{% block content %}
+{% block main %}
 {% include 'memo_template.html' %}
 {% if request.user.is_staff %}
     <div class="update_order">

@@ -3,188 +3,104 @@
 {% load widget_tweaks %}
 {% block head %}
 <style>
-    .product-form{
-        width: 170px;
-        float: left;
-        display: inline-block;
-        margin-right: 20px;
+  .btn{
+    width: 115px;
+    float: left;
+    display: block !important;
+  }
+  #total-orders{
+        background-color: #4cb4c7;
     }
-    .dropdown-menu ul li{
-        list-style: none;
+    #orders-delivered{
+        background-color: #7abecc;
     }
-    .dropdown{
-        display: inline-block;
-        margin-right: 20px;
-    }
-    #myInput {
-        background-image: url("{% static '/images/searchicon.png' %}"); 
-        background-position: 10px 12px; 
-        background-repeat: no-repeat; 
-        width: 100%;
-        font-size: 16px;
-        padding: 12px 20px 12px 40px;
-        border: 1px solid #ddd; 
-        margin-bottom: 12px;
-        margin-top: -10px;
+    #orders-pending{
+        background-color: #7CD1C0;
     }
 </style>
 <script>
-    function tagFunction() {
-      var input, filter, ul, li, a, i, txtValue;
-      input = document.getElementById('tagInput');
-      filter = input.value.toUpperCase();
-      ul = document.getElementById("id_tags");
-      li = ul.getElementsByTagName('li');
-    
-      for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("label")[0];
-        txtValue = a.textContent || a.innerText;
+  
+  function myFunction() {
+        // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[1];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
         if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          li[i].style.display = "";
+          tr[i].style.display = "";
         } else {
-          li[i].style.display = "none";
+          tr[i].style.display = "none";
         }
       }
     }
-    function categoryFunction() {
-      var input, filter, ul, li, a, i, txtValue;
-      input = document.getElementById('categoryInput');
-      filter = input.value.toUpperCase();
-      ul = document.getElementById("id_category");
-      li = ul.getElementsByTagName('li');
-    
-      for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("label")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          li[i].style.display = "";
-        } else {
-          li[i].style.display = "none";
-        }
-      }
-    }
-    function searchFunction() {
-      var input, filter, ul, li, a, i, txtValue;
-      input = document.getElementById('searchInput');
-      filter = input.value.toUpperCase();
-      ul = document.getElementById("myTable");
-      li = ul.getElementsByTagName('tr');
-    
-      for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("td")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          li[i].style.display = "";
-        } else {
-          li[i].style.display = "none";
-        }
-      }
-    }
-    </script>
-{%endblock%}
-{% block content %}
+  }
+</script>
+{% endblock %}
+{% block main %}
 
     <br>
-
+    <div class="row">
+      <div class="col">
+          <div class="col-md">
+              <div class="card text-center text-white md-3" id="total-orders">
+                  <a href="{% url 'store:add-product' %}" style="color: white !important; text-decoration:none;">
+                      <div class="card-header">
+                          <h5 class="card-title">Click here to add</h5>
+                      </div>
+                      <div class="card-body">
+                          <h3 class="card-title">Products</h3>
+                      </div>
+                  </a>
+              </div>
+          </div>
+      </div>
+      <div class="col">
+        <div class="col-md">
+            <div class="card text-center text-white md-3" id="orders-pending">
+                <a href="{% url 'store:add-color' %}" style="color: white !important; text-decoration:none;">
+                    <div class="card-header">
+                        <h5 class="card-title">Click here to add</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Colors</h3>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    </div> <br><br>
     <div class="row">
         <div class="col-md">
             <div class="card card-body">
-                <h5>Products</h5>
-            </div>
-            <div class="card card-body">
-                <form action="" method="POST" enctype='multipart/form-data'>
-                    {% csrf_token %}
-                    <input type="hidden" name="shopowner" value="{{request.user.shopowner.id}}">
-                    <p class="product-form">
-                        <label for="id_name"></label>
-                        {{ form.name|add_class:'form-control' }}
-                    </p>
-                    <p class="product-form">
-                        <label for="id_file"></label>
-                        <input type="file" multiple id="id_file" class="form-control" name="images">
-                    </p>
-                    <p class="product-form">
-                        <label for="id_price"></label>
-                        {{ form.price|add_class:'form-control' }}
-                    </p>
-                    <p class="product-form">
-                        <label for="id_stock">In Stock : </label>
-                        {{ form.stock|add_class:'form-control' }}
-                    </p>
-                        <div class="dropdown">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Select Category
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <input class="form-control" type="text" id="categoryInput" onkeyup="categoryFunction()" placeholder="Search tags">
-                                {{form.category}}
-                            </div>
-                          </div>
-                    <p class="product-form">
-                        <textarea name="description" cols="40" rows="10" placeholder="Description" class="form-control" required="" id="id_description" style="margin-top: 0px; margin-bottom: 0px; height: 73px;"></textarea>
-                    </p>
-                        <div class="dropdown">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Select Size
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <input class="form-control" type="text" id="tagInput" onkeyup="tagFunction()" placeholder="Search tags">
-                                {{form.size}}
-                            </div>
-                          </div>
-                          <div class="dropdown">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Select Color
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <input class="form-control" type="text" id="tagInput" onkeyup="tagFunction()" placeholder="Search tags">
-                                {{form.color}}
-                            </div>
-                          </div>
-                    <input class="btn btn-warning" type="submit" name='Add'>
-                </form>
-            </div>
-            <div class="card card-body">
-                <div class="buttons">
-                    
-                    <form method="GET">
-                      {% csrf_token %}
-                      <input type="hidden" name="id" value="0">
-                      <input type="submit" class="btn btn-outline-danger" name="flash_discount" value="Remove flash discount">
-                  </form></div>
-            </div>
-            <div class="card card-body">
-                <input id="myInput" class="form-control" onkeyup="searchFunction()" type="text" placeholder="Search..">
+                <input id="myInput" class="form-control" onkeyup="myFunction()" type="text" placeholder="Search..">
                 <br><br>
                 <table class="table table-sm paginated">
                     <thead>
                         <tr>
-                            <th>Image</th>
+                            <th>Product SL NO.</th>
                             <th>Product</th>
                             <th>Description</th>
                             <th>Price</th>
                             <th>Stock</th>
-                            <th>Remove <br> discount</th>
-                            <th>Update</th>
-                            <th>Delete</th>
+                            <th>View</th>
                         </tr>
                     </thead>
                     <tbody id="myTable">
                     {% for i in products %}
                         <tr>
-                            <td><img src="{{ i.img.url }}" alt="Product Img" style="height: 50px;"></td>
+                            <td>{{ i.id }}</td>
                             <td>{{ i.name }}</td>
                             <td>{{ i.description }}</td>
                             <td>{{ i.price|floatformat:2 }}</td>
-                            <td>{{ i.stock }}   <a href="" class="btn btn-outline-success">Add</a>
-                            </td>
-                            <td><form method="POST">
-                                {% csrf_token %}
-                                <input type="hidden" name="id" value="{{i.id}}">
-                                <input type="submit" class="btn btn-outline-danger" name="discount_amount" value="{{i.discount_amount|floatformat:2}}">
-                            </form></td>
-                            <td><a class="btn btn-sm btn-info" href="">Update</a></td>
-                            <td><a class="btn btn-sm btn-danger" href="#">Delete</a></td>
+                            <td>{{ i.stock }}</td>
+                            <td><a href="{% url 'store:shop-product-view' i.id %}" class="btn btn-outline-info">View</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
