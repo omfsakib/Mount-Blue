@@ -12,6 +12,62 @@
     }
 });
 </script>
+<script>
+    function categoryFunction() {
+       var input, filter, ul, li, a, i, txtValue;
+       input = document.getElementById('categoryInput');
+       filter = input.value.toUpperCase();
+       ul = document.getElementById("id_category");
+       li = ul.getElementsByTagName('div');
+     
+       for (i = 0; i < li.length; i++) {
+         a = li[i].getElementsByTagName("label")[0];
+         txtValue = a.textContent || a.innerText;
+         if (txtValue.toUpperCase().indexOf(filter) > -1) {
+           li[i].style.display = "";
+         } else {
+           li[i].style.display = "none";
+         }
+       }
+     }
+ 
+     function tagFunction() {
+       var input, filter, ul, li, a, i, txtValue;
+       input = document.getElementById('tagInput');
+       filter = input.value.toUpperCase();
+       ul = document.getElementById("id_size");
+       li = ul.getElementsByTagName('div');
+     
+       for (i = 0; i < li.length; i++) {
+         a = li[i].getElementsByTagName("label")[0];
+         txtValue = a.textContent || a.innerText;
+         if (txtValue.toUpperCase().indexOf(filter) > -1) {
+           li[i].style.display = "";
+         } else {
+           li[i].style.display = "none";
+         }
+       }
+     }
+     function colorFunction() {
+       var input, filter, ul, li, a, i, txtValue;
+       input = document.getElementById('colorInput');
+       filter = input.value.toUpperCase();
+       ul = document.getElementById("id_color");
+       li = ul.getElementsByTagName('div');
+     
+       for (i = 0; i < li.length; i++) {
+         a = li[i].getElementsByTagName("label")[0];
+         txtValue = a.textContent || a.innerText;
+         if (txtValue.toUpperCase().indexOf(filter) > -1) {
+           li[i].style.display = "";
+         } else {
+           li[i].style.display = "none";
+         }
+       }
+     }
+ 
+ 
+     </script>
 <style>
 :root{
     --orange:#ff9500;
@@ -207,7 +263,7 @@ p{
                           Select Color
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <input class="form-control" type="text" id="tagInput" onkeyup="tagFunction()" placeholder="Search colors">
+                            <input class="form-control" type="text" id="colorInput" onkeyup="colorFunction()" placeholder="Search colors">
                           {{ form.color }}  
                         </div>
                       </div>

@@ -85,8 +85,8 @@
                             <td>{%if i.size%}{{i.size}}{%endif%}</td>
                             <td>{%if i.color%}{{i.color}}{%endif%}</td>
                             <td>{{i.quantity}}</td>
-                            <td>{{i.rate}}</td>
-                            <td>{{i.total}}</td>
+                            <td>{{i.rate|floatformat:2}}</td>
+                            <td>{{i.total|floatformat:2}}</td>
                         </tr>
                         {% endfor %}
                         {% if order.delivery_fee %}
@@ -96,8 +96,8 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td>{{order.delivery_fee}}</td>
-                            <td>{{order.delivery_fee}}</td>
+                            <td>{{order.delivery_fee|floatformat:2}}</td>
+                            <td>{{order.delivery_fee|floatformat:2}}</td>
                         </tr>
                         {% endif %}
                         <tr>
@@ -109,17 +109,17 @@
                         <tr>
                             <td colspan="5"></td>
                             <td>Total</td>
-                            <td> {{order.total}}</td>
+                            <td> {% if total  %} {{total|floatformat:2}} {% else %} {{ order.total|floatformat:2 }} {% endif %}</td>
                         </tr>
                         <tr>
                             <td colspan="5"></td>
                             <td>Paid </td>
-                            <td>{{order.advance}}</td>
+                            <td>{% if paid >= 0 %} {{paid|floatformat:2}} {% else %} {{order.advance|floatformat:2}} {% endif %}</td>
                         </tr>
                         <tr>
                             <td colspan="5"></td>
                             <td>Due</td>
-                            <td> {{order.due}}</td>
+                            <td> {% if due %} {{due|floatformat:2}} {% else %} {{order.due|floatformat:2}} {% endif %}</td>
                         </tr>
                     </tbody>
                 </table>

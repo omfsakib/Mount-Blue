@@ -90,8 +90,12 @@
                         <span>( {% if j.total_review == 0 %} Not reviewed yet {% else %} {{j.total_review}} reviews {% endif %} )</span>
                     </div>
                     <h3>{{j.name}}</h3>
-                    <div class="price">&#2547;{{j.price}} {% if j.discount > 0 %} <span>&#2547;{{ j.demo_price }}</span> {% endif %} </div>
-                    <button data-product={{j.id}} data-action="add" class="btn update-cart">add to cart</button>
+                    <div class="price">&#2547;{{j.price|floatformat:2}}</div>
+                    {% if j.stock <= 0 %}
+                    <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                    {% else %}
+                    <button data-product={{j.id}} data-action="add" class="btn update-cart">Add to Cart</button>
+                    {% endif %}
                 </div>
             </div>
         </div>

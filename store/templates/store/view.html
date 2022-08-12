@@ -224,37 +224,7 @@
           <p>Reviewed by: <strong>{{i.user}} </strong>at {{i.created_at}}</p>
           <p>{{i.comment}}</p>
             <p class="star_review">
-              {% if i.rate == 1 %}
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star"></span>
-              <span class="fa fa-star"></span>
-              <span class="fa fa-star"></span>
-              <span class="fa fa-star"></span>
-              {% elif i.rate == 2 %}
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star"></span>
-              <span class="fa fa-star"></span>
-              <span class="fa fa-star"></span>
-              {% elif i.rate == 3 %}
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star"></span>
-              <span class="fa fa-star"></span>
-              {% elif i.rate == 4 %}
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star"></span>
-              {% elif i.rate == 5 %}
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              <span class="fa fa-star checked"></span>
-              {% endif %}
+              Rating : {{i.rate|floatformat:1}}<i class="fas fa-star"></i>
               </p>
               {% if request.user.customer == i.user %}
                 <a href="{% url 'store:delete_review' i.id %}" class="btn btn-sm btn-outline-danger">Delete</a>

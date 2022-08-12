@@ -8,7 +8,7 @@
     <div class="content">
         <span>special offer</span>
         <h3>sale upto 50% off</h3>
-        <a href="#" class="btn">shop now</a>
+        <a href="/products" class="btn">shop now</a>
     </div>
 
     <div class="image">
@@ -114,11 +114,11 @@
                         <span>( {% if i.total_review == 0 %} Not reviewed yet {% else %} {{i.total_review}} reviews {% endif %} )</span>
                     </div>
                     <h3>{{i.name}}</h3>
-                    <div class="price">&#2547;{{i.price}} {% if i.discount > 0 %} <span>&#2547;{{ i.demo_price }}</span> {% endif %} </div>
+                    <div class="price">&#2547;{{i.price|floatformat:2}}</div>
                     {% if i.stock <= 0 %}
                     <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
                     {% else %}
-                    <button data-product={{i.id}} data-action="add" class="btn update-cart">add to cart</button>
+                    <button data-product={{i.id}} data-action="add" class="btn update-cart">Add to Cart</button>
                     {% endif %}
                     
                 </div>
@@ -187,11 +187,11 @@
                         <span>( {% if j.total_review == 0 %} Not reviewed yet {% else %} {{j.total_review}} reviews {% endif %} )</span>
                     </div>
                     <h3>{{j.name}}</h3>
-                    <div class="price">&#2547;{{j.price}} {% if j.discount > 0 %} <span>&#2547;{{ j.demo_price }}</span> {% endif %} </div>
+                    <div class="price">&#2547;{{j.price|floatformat:2}}</div>
                     {% if j.stock <= 0 %}
                     <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
                     {% else %}
-                    <button data-product={{j.id}} data-action="add" class="btn update-cart">add to cart</button>
+                    <button data-product={{j.id}} data-action="add" class="btn update-cart">Add to Cart</button>
                     {% endif %}
                 </div>
             </div>
@@ -229,7 +229,7 @@
                 </div>
             </div>
             <div class="content">
-                <h3>man's clothing</h3>
+                <h3>{{k.name}}</h3>
                 <div class="stars">
                     {% if k.rate <= 0 %}
                         <i class="far fa-star"></i>
@@ -271,11 +271,11 @@
                         <span>( {% if k.total_review == 0 %} Not reviewed yet {% else %} {{k.total_review}} reviews {% endif %} )</span>
                 </div>
                 <p>{{k.description}}</p>
-                <div class="price">&#2547;{{k.price}} {% if k.discount > 0 %} <span>&#2547;{{ k.demo_price }}</span> {% endif %} </div>
+                <div class="price">&#2547;{{k.price|floatformat:2}} </div>
                 {% if k.stock <= 0 %}
                 <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
                 {% else %}
-                <button data-product={{k.id}} data-action="add" class="btn update-cart">add to cart</button>
+                <button data-product={{k.id}} data-action="add" class="btn update-cart">Add to Cart</button>
                 {% endif %}
             </div>
         </div>
@@ -295,7 +295,7 @@
                 </div>
             </div>
             <div class="content">
-                <h3>man's clothing</h3>
+                <h3>{{k.name}}</h3>
                 <div class="stars">
                     {% if k.rate <= 0 %}
                         <i class="far fa-star"></i>
@@ -337,11 +337,11 @@
                         <span>( {% if k.total_review == 0 %} Not reviewed yet {% else %} {{k.total_review}} reviews {% endif %} )</span>
                 </div>
                 <p>{{k.description}}</p>
-                <div class="price">&#2547;{{k.price}} {% if k.discount > 0 %} <span>&#2547;{{ k.demo_price }}</span> {% endif %} </div>
+                <div class="price">&#2547;{{k.price|floatformat:2}}</div>
                 {% if k.stock <= 0 %}
                 <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
                 {% else %}
-                <button data-product={{k.id}} data-action="add" class="btn update-cart">add to cart</button>
+                <button data-product={{k.id}} data-action="add" class="btn update-cart">Add to Cart</button>
                 {% endif %}
             </div>
         </div>
@@ -404,12 +404,13 @@
                         <span>( {% if k.total_review == 0 %} Not reviewed yet {% else %} {{k.total_review}} reviews {% endif %} )</span>
                 </div>
                 <p>{{k.description}}</p>
-                <div class="price">&#2547;{{k.price}} {% if k.discount > 0 %} <span>&#2547;{{ k.demo_price }}</span> {% endif %} </div>
+                <div class="price">&#2547;{{k.price|floatformat:2}}</div>
                 {% if k.stock <= 0 %}
                 <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
                 {% else %}
-                <button data-product={{k.id}} data-action="add" class="btn update-cart">add to cart</button>
+                <button data-product={{k.id}} data-action="add" class="btn update-cart">Add to Cart</button>
                 {% endif %}
+                <a href="{% url 'store:product_view' k.id %}"><button class="btn">View</button></a>
             </div>
         </div>
         {% endfor %}

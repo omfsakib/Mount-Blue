@@ -25,7 +25,7 @@ class OrderForm(ModelForm):
 class UpdateOrderForm(ModelForm):
     class Meta:
         model = Order
-        fields = ['status',]
+        fields = ['status','advance',]
 
 class ProductForm(ModelForm):
     name = forms.CharField(label='Product Name',widget=forms.TextInput(attrs={'placeholder': 'Product Name'}))

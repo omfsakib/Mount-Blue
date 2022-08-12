@@ -3,12 +3,7 @@
 {% load widget_tweaks %}
 {% block head %}
 <style>
-    .product-form{
-        width: 170px;
-        float: left;
-        display: inline-block;
-        margin-right: 20px;
-    }
+    
     .dropdown-menu ul li{
         list-style: none;
     }
@@ -114,6 +109,9 @@
             <label for="id_stock">In Stock : </label>
             {{ form.stock|add_class:'form-control' }}
         </p>
+        <p class="product-form">
+          <textarea name="description" cols="40" rows="10" placeholder="Description" class="form-control" required="" id="id_description" style="margin-top: 0px; margin-bottom: 0px; height: 73px;"></textarea>
+      </p>
             <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Select Category
@@ -123,9 +121,7 @@
                     {{form.category}}
                 </div>
               </div>
-        <p class="product-form">
-            <textarea name="description" cols="40" rows="10" placeholder="Description" class="form-control" required="" id="id_description" style="margin-top: 0px; margin-bottom: 0px; height: 73px;"></textarea>
-        </p>
+        
             <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Select Size

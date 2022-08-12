@@ -102,7 +102,7 @@ class Order(models.Model):
         ('Delivered','Delivered'),
         ('Take','Take')
     )
-    shop = models.ForeignKey(ShopOwner, on_delete=models.SET_NULL, blank=True, null=True)
+    shop = models.ManyToManyField(ShopOwner)
     customer = models.ForeignKey(Customer, null=True, on_delete= models.CASCADE)
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=200, null=True)
@@ -113,7 +113,6 @@ class Order(models.Model):
     advance = models.FloatField(default=0,blank=True,null=True)
     due = models.FloatField(default=0,blank=True,null=True)
     status = models.CharField(default="Pending",max_length=200,blank=True, null=True,choices=STATUS)
-    taken_user = models.ForeignKey(User, null=True, on_delete= models.CASCADE)
 
     def __str__(self):
         return str(self.id)
@@ -157,6 +156,8 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(default=0,null=True,blank=True)
     rate = models.FloatField(default=0,blank=True,null=True)
     total = models.FloatField(default=0,blank=True,null=True)
+    advance = models.FloatField(default=0,blank=True,null=True)
+    due = models.FloatField(default=0,blank=True,null=True)
     color = models.CharField(blank=True,null=True, max_length=100)
     size = models.CharField(blank=True,null=True, max_length=100)
     date_added = models.DateTimeField(auto_now_add=True)

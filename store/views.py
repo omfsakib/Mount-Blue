@@ -114,7 +114,11 @@ def loginPage(request):
 
         if user is not None:
             login(request,user)
-            return redirect('store:store')
+            group = request.user.groups.all()[0].name
+            if group == 'customer':
+                return redirect('store:store')
+            else :
+                return redirect('store:home')
         else:
             messages.info(request,'Username or Password is incorrect')
     context = {}
@@ -365,6 +369,7 @@ def cart(request):
         cartItems = cookieData['cartItems']
         order = cookieData['order']
         items = cookieData['items']
+        print(items)
         for item in items:
             product = Product.objects.get(id = item['product']['id'])
             sizes = product.size.all()
@@ -456,7 +461,8 @@ def updateItem(request):
     customer = request.user.customer
     product = Product.objects.get(id=productId)
     shopowner = product.shopowner
-    order, created = Order.objects.get_or_create(customer=customer,shop=shopowner, complete=False)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    order.shop.add(shopowner)
 
     orderItem, created = OrderItem.objects.get_or_create(customer=customer, order=order,shop=shopowner,  product=product, status='Pending')
     orderItem.rate = product.price
@@ -508,15 +514,9 @@ def processOrder(request):
         for i in delivery_charge:
             chrge = i.fee
             discount = i.discount
-        if total < 500:
-            delivery_chrg = float(chrge)
-        elif total >= 500 and total < 1500:
-            delivery_chrg = float(chrge-(chrge*(discount/100)))
-        elif total >= 1500:
-            delivery_chrg = float(chrge-(chrge*((2*discount)/100)))
         
-        order.delivery_fee = delivery_chrg
-        order.total = total + delivery_chrg
+        order.delivery_fee = chrge
+        order.total = total + chrge
     order.save()
     
     if order.shipping == True:
@@ -749,16 +749,45 @@ def viewOrder(request,pk):
     context = {'order':order_y,'orders':orders,'address':address,'cartItems':cartItems,'shop':shop}
     return render(request,'store/view_order.html',context)
 
+@login_required(login_url='login')
+@shopowner_only
+@allowed_users(allowed_roles=['shopowner'])
 def updateOrder(request,pk):
+    total = 0
+    paid = 0
+    due = 0
     order_y = Order.objects.get(id = pk)
-    shop = order_y.shop
-    orders = OrderItem.objects.filter(order = order_y)
-    address = ShippingAddress.objects.get(order=order_y)
+    o_advance = order_y.advance
+    print(o_advance)
+    shop = request.user.shopowner
+    orders = OrderItem.objects.filter(order = order_y, shop =shop)
+    for i in orders:
+        total += float(i.total)
+        paid = i.advance
+
+    delivery_charge = Delivery_charge.objects.all()
+    for i in delivery_charge:
+        chrge = i.fee
+        discount = i.discount
+    
+    total += chrge
+    
+    due = float(total) - float(paid)
+
     form = UpdateOrderForm(instance=order_y)
     if request.method =='POST':
         form = UpdateOrderForm(request.POST,instance=order_y)
+        advance = request.POST.get('advance')
+        status = request.POST.get('status')
         if form.is_valid():
-            form.save()
+            order_y.status = status
+            o_advance += float(advance)
+            order_y.advance = o_advance
+            order_y.due = order_y.total - float(order_y.advance)
+            order_y.save()
+            for j in orders:
+                j.advance += float(advance)
+                j.save()
             if order_y.status == 'Delivered':
                 for i in orders:
                     i.product.stock -= 1
@@ -769,8 +798,12 @@ def updateOrder(request,pk):
                 order_y.save()
                 return redirect('/track_order')
 
-            return redirect('/')
-    context = {'order':order_y,'orders':orders,'address':address,'shop':shop,'form':form,}
+        return redirect(reverse('store:update_order', kwargs={'pk':pk}))
+    if order_y.customer:
+        address = ShippingAddress.objects.get(order=order_y)
+        context = {'total':total,'due':due,'paid':paid,'order':order_y,'orders':orders,'address':address,'shop':shop,'form':form,}
+    else:
+        context = {'order':order_y,'orders':orders,'shop':shop,'form':form,}
 
     return render(request,'shop/update_order.html',context)
 
@@ -780,7 +813,7 @@ def deleteOrder(request, pk):
     action = 'delete_order'
     if request.method == "POST":
         order.delete()
-        return redirect('/')
+        return redirect('/totalOrders')
 
     context = {'item':order,'action':action}
     return render(request,'store/delete.html',context)
@@ -815,7 +848,8 @@ def offlineOrder(request):
         item = request.POST.get('product')
         quantity = request.POST.get('quantity')
         product = Product.objects.get(id = item)
-        order, created = Order.objects.get_or_create(shop=shop, complete=False)
+        order, created = Order.objects.get_or_create( complete=False)
+        order.shop.add(shop)
         orderItem, created = OrderItem.objects.get_or_create( order=order,shop=shop,  product=product, status='pending')
         orderItem.quantity = quantity
 

@@ -1,7 +1,22 @@
 {% extends 'shop/main.html' %}
 {% load widget_tweaks %}
 {% load static %}
+{% block head %}
+<script>
+    function printDiv(divName) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+
+     document.body.innerHTML = printContents;
+
+     window.print();
+
+     document.body.innerHTML = originalContents;
+}
+</script>
+{% endblock %}
 {% block main %}
+<button class="btn btn-lg btn-info" onclick="printDiv('memo')" style="float: right;">Print</button> <br><br>
 {% include 'memo_template.html' %}
 {% if request.user.is_staff %}
     <div class="update_order">
@@ -12,7 +27,8 @@
                 <form action="" method="POST">
                     {% csrf_token %}
                         <p style="display: none;">{{form.product|add_class:'form-control'}}</p>
-                        <p>{{form.status|add_class:'form-control'}}</p>
+                        <p>Status: {{form.status|add_class:'form-control'}}</p>
+                        <p>Advance: <input type="number" name="advance" value="0"  step="any" class="form-control" id="id_advance"></p>
                         <p><input class="btn btn-primary"  type="submit" ></p>
                     <hr>
                 </form>
@@ -20,7 +36,4 @@
         </div>
     </div>
     {% endif %}
-    <div class="order-manual">
-        <a href="{% url 'store:delete_order' order.id %}" class="btn btn-danger">Delete order</a>
-    </div>
 {% endblock %}
