@@ -848,7 +848,7 @@ def offlineOrder(request):
         item = request.POST.get('product')
         quantity = request.POST.get('quantity')
         product = Product.objects.get(id = item)
-        order, created = Order.objects.get_or_create( complete=False)
+        order, created = Order.objects.get_or_create(complete=False, transaction_id = shop.user.username)
         order.shop.add(shop)
         orderItem, created = OrderItem.objects.get_or_create( order=order,shop=shop,  product=product, status='pending')
         orderItem.quantity = quantity
@@ -912,7 +912,7 @@ def offlineOrder(request):
 @shopowner_only
 def memoPrint(request,pk):
     order_y = Order.objects.get(id = pk)
-    shop = order_y.shop
+    shop = request.user.shopowner
     orders = OrderItem.objects.filter(order = order_y)
     address_check  = ShippingAddress.objects.filter(order=order_y).count()
     if address_check >0 :
