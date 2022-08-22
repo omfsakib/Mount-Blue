@@ -70,10 +70,15 @@ def registerPage(request):
 def shopOwnerRegisterPage(request):
     form = CreateUserForm()
     username = request.POST.get('username')
+    first_name = request.POST.get('first_name')
+    last_name = request.POST.get('last_name')
     email = request.POST.get('email')
+    phone = request.POST.get('phone')
+    address = request.POST.get('address')
+    img = request.POST.get('img')
     password = request.POST.get('password1')
     if request.method == 'POST':
-        form = CreateUserForm(request.POST)
+        form = CreateUserForm(request.POST,request.FILES)
         try:
             if User.objects.filter(username=username).first():
                 messages.success(request, 'Username is taken.')
@@ -84,7 +89,7 @@ def shopOwnerRegisterPage(request):
                 return redirect('/shopregister')
 
             if form.is_valid():
-                user_obj = User.objects.create(username =username,email=email,is_staff = True)
+                user_obj = User.objects.create(username =username,email=email,first_name =first_name,last_name=last_name ,is_staff = True)
                 user_obj.set_password(password)
                 user_obj.save()
                 auth_token=str(uuid.uuid4())
@@ -93,10 +98,18 @@ def shopOwnerRegisterPage(request):
                 group = Group.objects.get(name = 'shopowner')
                 user_obj.groups.add(group)
                 ShopOwner.objects.create(
-                    user = user_obj
+                    user = user_obj,
+                    phone = phone,
+                    address = address,
+                    profile_pic = img
                 )
-                messages.success(request,'Account was created for ' + username)
-                return redirect('/token')
+                user = authenticate(request,username=username, password=password)
+
+                if user is not None:
+                    login(request,user)
+                    return redirect('/shop/dashboard')
+                else:
+                    messages.info(request,'Something went wrong!')
         
         except Exception as e:
             print(e)
@@ -128,7 +141,7 @@ def logoutUser(request):
     logout(request)
     return redirect('store:login')
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 def viewAccount(request, pk = None):
     try:
         if request.user.is_authenticated:
@@ -148,7 +161,7 @@ def viewAccount(request, pk = None):
     args = {'cartItems':cartItems,'user':user}
     return render(request,'accounts/account.html',args)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 def accountSettings(request):
     try:
         if request.user.is_authenticated:
@@ -190,7 +203,7 @@ def accountSettings(request):
     context = {'form':form,'cartItems':cartItems,'form2':form2}
     return render(request,'accounts/account_settings.html',context)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 def change_password(request):
     try:
         if request.user.is_authenticated:
@@ -229,13 +242,12 @@ def change_password(request):
         args = {'form': form}
     return render(request, 'accounts/change_password.html', args)
 
+
 def store(request):
     total_products = Product.objects.all().count()
-    latest_products = Product.objects.all()[:10]
-    if total_products > 10:
-        after_latest = Product.objects.all()[10:]
-    else:
-        after_latest = Product.objects.all()[:10]
+    half_products = int(total_products) / 2
+    latest_products = Product.objects.all().order_by('-date_created')[:half_products]
+    after_latest = Product.objects.all().order_by('-date_created')[half_products:]
 
     for i in latest_products:
         i.images = ProductImages.objects.filter(product = i)[:1]
@@ -245,9 +257,9 @@ def store(request):
         j.images = ProductImages.objects.filter(product = j)[:1]
         j.total_review = Review.objects.filter(product = j).count()
     
-    featured_products1 = Product.objects.filter(featured = 'True')[:1]
-    featured_products2 = Product.objects.filter(featured = 'True')[1:2]
-    featured_products3 = Product.objects.filter(featured = 'True')[2:3]
+    featured_products1 = Product.objects.filter(featured = 'True').order_by('-date_created')[:1]
+    featured_products2 = Product.objects.filter(featured = 'True').order_by('-date_created')[1:2]
+    featured_products3 = Product.objects.filter(featured = 'True').order_by('-date_created')[2:3]
 
     for k in featured_products1:
         k.images = ProductImages.objects.filter(product = k)
@@ -307,7 +319,7 @@ def products(request):
         items = cookieData['items']
     
 
-    products = Product.objects.all().order_by('-discount_amount','-discount','-stock','-date_created')
+    products = Product.objects.all().order_by('-discount_amount','-discount','rate','-stock','-date_created')
     categorys = Category.objects.all()
     
     for i in categorys:
@@ -339,6 +351,7 @@ def cart(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         cartItems = order.get_cart_items
+        cartTotal = order.get_cart_total
         items = order.orderitem_set.all()
         total_items = items.count()
         if total_items> 0:
@@ -352,6 +365,7 @@ def cart(request):
             context = {
                 'items':items,
                 'cartItems':cartItems,
+                'cartTotal':cartTotal,
                 'order':order,
                 'item.image':item.image,
                 'sizes':sizes,
@@ -367,21 +381,34 @@ def cart(request):
     else:
         cookieData = cookieCart(request)
         cartItems = cookieData['cartItems']
+        cartTotal = cookieData['cartTotal']
         order = cookieData['order']
         items = cookieData['items']
-        print(items)
-        for item in items:
-            product = Product.objects.get(id = item['product']['id'])
-            sizes = product.size.all()
-            colors = product.color.all()
-            item['image'] = ProductImages.objects.filter(product = product)[:1]
-        context = {
-            'items':items,
-            'cartItems':cartItems,
-            'order':order,
-            'item.image':item['image'],
-            'sizes':sizes,
-            'colors':colors
+        total_items = len(items)
+
+        if total_items > 0:
+
+            for item in items:
+                product = Product.objects.get(id = item['product']['id'])
+                sizes = product.size.all()
+                colors = product.color.all()
+                item['image'] = ProductImages.objects.filter(product = product)[:1]
+
+            context = {
+                'items':items,
+                'cartItems':cartItems,
+                'cartTotal':cartTotal,
+                'order':order,
+                'item.image':item['image'],
+                'sizes':sizes,
+                'colors':colors
+                }
+        else:
+            context = {
+                'items':items,
+                'cartItems':cartItems,
+                'cartTotal':cartTotal,
+                'order':order,
             }
     return render(request, 'store/cart.html',context)
 
@@ -703,7 +730,7 @@ def view_shops(request,pk):
         }
     return render(request,'store/view_shop.html',context)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 def userDashboard(request):
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -732,7 +759,7 @@ def userDashboard(request):
     }
     return render(request, 'store/user-dashboard.html',context)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 def viewOrder(request,pk):
     order_y = Order.objects.get(id = pk)
     shop = order_y.shop
@@ -758,7 +785,6 @@ def updateOrder(request,pk):
     due = 0
     order_y = Order.objects.get(id = pk)
     o_advance = order_y.advance
-    print(o_advance)
     shop = request.user.shopowner
     orders = OrderItem.objects.filter(order = order_y, shop =shop)
     for i in orders:
@@ -807,7 +833,7 @@ def updateOrder(request,pk):
 
     return render(request,'shop/update_order.html',context)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 def deleteOrder(request, pk):
     order = Order.objects.get(id=pk)
     action = 'delete_order'
@@ -834,7 +860,7 @@ def home(request):
 
     return render(request,'shop/dashboard.html',context)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 @shopowner_only
 def offlineOrder(request):
     shop = request.user.shopowner
@@ -908,7 +934,7 @@ def offlineOrder(request):
     return render(request,'shop/offlineOrder.html',context)
 
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 @shopowner_only
 def memoPrint(request,pk):
     order_y = Order.objects.get(id = pk)
@@ -927,7 +953,7 @@ def memoPrint(request,pk):
     return render(request,'shop/memoPrint.html',context)
 
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 @shopowner_only
 def addProducts(request):
     shopowner = request.user.shopowner
@@ -974,7 +1000,7 @@ def addProducts(request):
     context ={'form':form}
     return render(request,'shop/addProducts.html',context)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 @shopowner_only
 def shopProducts(request):
     shopowner = request.user.shopowner
@@ -986,7 +1012,7 @@ def shopProducts(request):
     return render(request,'shop/products.html',context)
 
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 def totalOrders(request):
     try:
         user = request.user.customer
@@ -1021,7 +1047,7 @@ def totalOrders(request):
     }
     return render(request,'totalOrders.html',context)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 @shopowner_only
 @allowed_users(allowed_roles=['shopowner'])
 def addColors(request):
@@ -1041,7 +1067,7 @@ def addColors(request):
     return render(request,'shop/addColors.html',context)
 
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 @shopowner_only
 @allowed_users(allowed_roles=['shopowner'])
 def shopProductView(request,pk):
@@ -1088,7 +1114,7 @@ def shopProductView(request,pk):
     return render(request,'shop/productView.html',context)
 
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 @shopowner_only
 @allowed_users(allowed_roles=['shopowner'])
 def shopProductEdit(request,pk):

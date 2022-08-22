@@ -4,6 +4,9 @@
 {% block main %}
     
 <style>
+  del {
+    text-decoration: line-through;
+}
   .featured_inside{
     padding: 0;
   }
@@ -136,7 +139,7 @@
             <h3>{{product.name}}</h3>
             <p>{{product.quantity}}</p>
             <p style="font-size: 20px;"><strong>&#2547;{{product.price|floatformat:2}}</strong> {% if product.discount_amount > 0 %}
-              <span style="font-size: 13px;"><del> MRP &#2547;{{demo_price|floatformat:0}}</del> ({{product.discount}}% discount)</span>
+              <span style="font-size: 13px;"><del> MRP &#2547;{{demo_price|floatformat:0}} </del> ({{product.discount}}% discount)</span>
               {% endif %}
              </p>
              <div class="stars">

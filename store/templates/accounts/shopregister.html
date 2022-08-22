@@ -74,7 +74,7 @@
 		<div class="d-flex justify-content-center h-100">
 			<div class="user_card">
 				<div class="d-flex justify-content-center">
-					<h3 id="form-title">REGISTER ACCOUNT</h3>
+					<h3 id="form-title">REGISTER SHOP</h3>
 				</div>
 				{% for message in messages %}
 					<p id="messages">{{message}}</p>
@@ -83,7 +83,20 @@
 
 					<form method="POST" action="">
                         {% csrf_token %}
-						<div class="input-group mb-3">
+                        
+                        <div class="input-group mb-2">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class='fas fa-user-cog'></i></span>
+							</div>
+                            <input type="text" name="first_name">
+						</div>
+                        <div class="input-group mb-2">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class='fas fa-user-cog'></i></span>
+							</div>
+                            <input type="text" name="last_name">
+						</div>
+						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
@@ -94,6 +107,24 @@
 								<span class="input-group-text"><i class="fas fa-envelope-square"></i></span>
 							</div>
                             {{form.email}}
+						</div>
+                        <div class="input-group mb-2">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class='fas fa-phone-square'></i></span>
+							</div>
+                            <input type="text" name="phone">
+						</div>
+                        <div class="input-group mb-2">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class="fas fa-address-book"></i></span>
+							</div>
+                            <input type="text" name="address" >
+						</div>
+                        <div class="input-group mb-2">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+							</div>
+                            <input type="file" name="img" >
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
@@ -118,9 +149,6 @@
 					<div class="d-flex justify-content-center links">
 						Already have an account? <a href="{% url 'store:login' %}" class="ml-2">Login</a>
 					</div>
-					<div class="d-flex justify-content-center links">
-						Want to register shop? <a href="{% url 'store:shop-register' %}" class="ml-2">ShopRegister</a>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -132,10 +160,15 @@
 
 		//Query All input fields
 		var form_fields = document.getElementsByTagName('input')
-		form_fields[1].placeholder='Username..';
-		form_fields[2].placeholder='Email..';
-		form_fields[3].placeholder='Enter password...';
-		form_fields[4].placeholder='Re-enter Password...';
+		form_fields[1].placeholder='First Name..';
+		form_fields[2].placeholder='Last Name..';
+		form_fields[3].placeholder='Username..';
+		form_fields[4].placeholder='Email..';
+		form_fields[5].placeholder='Phone..';
+		form_fields[6].placeholder='Address..';
+		form_fields[7].placeholder='Profile Pic..';
+		form_fields[8].placeholder='Enter password...';
+		form_fields[9].placeholder='Re-enter Password...';
 
 
 		for (var field in form_fields){

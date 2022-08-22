@@ -4,7 +4,4 @@
 {% block main %}
 {% include 'memo_template.html' %}
 
-    <div class="order-manual">
-        <a href="{% url 'store:delete_order' order.id %}" class="btn btn-danger">Delete order</a>
-    </div>
 {% endblock %}

@@ -66,7 +66,7 @@ section{
     text-transform: uppercase;
 }
 
-/* .btn{
+.btn1{
     display: inline-block;
     margin-top: 1rem;
     border-radius: 5rem;
@@ -77,10 +77,10 @@ section{
     cursor: pointer;
 }
 
-.btn:hover{
+.btn1:hover{
     background:var(--orange);
     color:#fff;
-} */
+}
 
 header{
     width: 100%;

@@ -55,20 +55,31 @@
     <div class="order_memo" style="background-color: #fff;">
         <div class="container-fluid"> <br>
             <div class="header text-center">
+                {% if request.user.is_staff %}
                 <h1>{{ shop.user.first_name }} {{ shop.user.last_name }}</h1>
                 <p class="shop-address">{{shop.address}}</p>
                 <p>Mobile : +88{{shop.phone}}, E-mail : {{shop.user.email}}</p>
+                {% else %}
+                <h1>GHORE BAIRE</h1>
+                <p class="shop-address">{{shop.address}}</p>
+                <p>Mobile : +8801617839305, E-mail : ghorebairebd@gmail.com</p>
+                {% endif %}
             </div>
             <div class="content">
                 <p class="order_id">Memo No. {{order.id}}</p> <p class="order_date">Date : {{order.date_added}}</p><br><br><br>
                 <p>Name : {% if order.customer.user.first_name %} {{order.customer.user.first_name}} {{order.customer.user.last_name}} {% else %} ........................................................{% endif %}</p>
+                <p>Phone : +88{{order.customer.phone}}</p>
                 <p>Address :{% if address %} {{address.address}}, {{address.city}}, {{address.state}} {%else%} ........................................................{%endif%}</p>
             </div><br><br>
             <div class="order_info">
                 <table class="table">
                     <thead>
                         <tr>
+                            {% if request.user.is_staff %}
                             <th>No.</th>
+                            {% else %}
+                            <th>From.</th>
+                            {% endif %}
                             <th>Description of Goods</th>
                             <th>Size</th>
                             <th>Color</th>
@@ -80,7 +91,11 @@
                     <tbody>
                         {% for i in orders %}
                         <tr>
+                            {% if request.user.is_staff %}
                             <td></td>
+                            {% else %}
+                            <td>{{ i.shop }}</td>
+                            {% endif %}
                             <td>{{i.product.name}}</td>
                             <td>{%if i.size%}{{i.size}}{%endif%}</td>
                             <td>{%if i.color%}{{i.color}}{%endif%}</td>
@@ -124,13 +139,13 @@
                     </tbody>
                 </table>
                 <div class="aprroval">
-                    <p>Tk in word : ........................................................</p>
+                    <p>In word : ........................................................</p>
                     <hr> <br>
                     <p class="sign-1">Receiver's Signature :</p>
                     <p class="sign-2">From - {{ shop.user.first_name }} {{ shop.user.last_name }} :</p>
                 </div>
                 <div class="powered_by text-center">
-                    <p>Powered By <a href="{% url 'store:store' %}">ghorebahirebd.com</a></p>
+                    <p>Powered By <a href="{% url 'store:store' %}">ghorebairebd.com</a></p>
                 </div>
             </div>
         </div>

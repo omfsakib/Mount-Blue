@@ -9,14 +9,14 @@
           <p>Product added in last 7 days: </p>
           <div class="product_week" style="height: 50px; overflow: auto;">
             {% for i in product_week %}
-            <a href="{% url 'store:product_view' i.id %}" class="btn btn-outline-info" style="margin-top: 5px;">{{i.name}}</a>
+            <a href="{% url 'store:product_view' i.id %}" class="btn1 btn-outline-info" style="margin-top: 5px;">{{i.name}}</a>
             {% endfor %}
           </div><br>
           <p>Top Reviewed Product: </p>
           <div class="top_reviewed" style="height: 50px; overflow: auto;">
             {% for i in top_reviewed %}
             {% if i.rate >= 3 %}
-            <a href="{% url 'store:product_view' i.id %}" class="btn btn-outline-info" style="margin-top: 5px;"><strong>{{i.name}}</strong>: {{i.rate|floatformat:1}}&#9733;</a>
+            <a href="{% url 'store:product_view' i.id %}" class="btn1 btn-outline-info" style="margin-top: 5px;"><strong>{{i.name}}</strong>: {{i.rate|floatformat:1}}&#9733;</a>
             {% endif %}
             {% endfor %}
           </div>
@@ -92,9 +92,9 @@
                     <h3>{{j.name}}</h3>
                     <div class="price">&#2547;{{j.price|floatformat:2}}</div>
                     {% if j.stock <= 0 %}
-                    <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                    <button class="btn1 btn-outline-danger btn-disabled">Add to Cart</button>
                     {% else %}
-                    <button data-product={{j.id}} data-action="add" class="btn update-cart">Add to Cart</button>
+                    <button data-product={{j.id}} data-action="add" class="btn1 update-cart">Add to Cart</button>
                     {% endif %}
                 </div>
             </div>

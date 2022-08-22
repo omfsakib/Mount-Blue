@@ -10,8 +10,8 @@
             <p>Are you sure you want to delete "{{ item }}"?</p>
             <form action="{% url 'store:delete_order' item.id %}" method="POST">
                 {% csrf_token %}
-                <a class="btn btn-warning" href="{% url 'store:home' %}">Cancel</a>
-                <input type="submit" name="Confirm" class="btn btn-danger">
+                <a class="btn1 btn-warning" href="{% url 'store:home' %}">Cancel</a>
+                <input type="submit" name="Confirm" class="btn1 btn-danger">
             </form>         
         </div>
     </div>

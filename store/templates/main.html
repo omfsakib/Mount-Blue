@@ -20,10 +20,29 @@
     <!-- font awesome cdn link  -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
    
     <!-- custom css file link  -->
     <link rel="stylesheet" href="{% static '/css/style.css' %}">
+
+    <style>
+        .btn1{
+    display: inline-block;
+    margin-top: 1rem;
+    border-radius: 5rem;
+    background: var(--black-color);
+    color:var(--white-color);
+    font-size: 1.8rem;
+    padding:.9rem 3.5rem;
+    cursor: pointer;
+}
+
+.btn1:hover{
+    background:var(--orange);
+    color:#fff;
+}
+    </style>
 
     <script>
         var user = '{{request.user}}'
@@ -120,7 +139,7 @@
 
 <header>
 
-    <a href="{% url 'store:store' %}" class="logo">Ghore Bahire<span>.</span></a>
+    <a href="{% url 'store:store' %}" class="logo">Ghore Baire<span>.</span></a>
 
     <form action="">
         <input  type="search" onkeyup="productFunction()" id="search-bar">
@@ -196,22 +215,22 @@
 
         <div class="box">
             <h3>donwload links</h3>
-            <a href="#">windows store</a>
-            <a href="#">app store</a>
-            <a href="#">google store</a>
+            <a href="">windows store</a>
+            <a href="">app store</a>
+            <a href="">google store</a>
         </div>
 
         <div class="box">
             <h3>contact us</h3>
-            <a href="#">+123-456-7890</a>
-            <a href="#">example@gmail.com</a>
-            <a href="#">mumbai, india - 400104</a>
+            <a href="">+880-161-7839-305</a>
+            <a href="">ghorebairebd@gmail.com</a>
+            <a href="">Mohammadpur, Dhaka - 1207</a>
             <img src="images/payment.png" alt="">
         </div>
 
     </div>
 
-    <div class="credit"> <span> Ghore Bahire </span> | all rights reserved </div>
+    <div class="credit"> <span> Ghore Baire </span> | all rights reserved </div>
 
 </div>
 

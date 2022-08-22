@@ -3,7 +3,7 @@
 {% block main %}
 
 <section class="products" id="products">
-    <p><a href="{% url 'store:store' %}">Home</a> > <a href="/{{c_for}}">{{c_for}}</a></p>
+    <p><a href="{% url 'store:store' %}">Home</a> > <a href="/category/{{c_for}}">{{c_for}}</a></p>
     {% for i in categorys %}
 
     {% if i.products %}
@@ -69,9 +69,9 @@
                     <h3>{{j.name}}</h3>
                     <div class="price">&#2547;{{j.price|floatformat:2}}</div>
                     {% if j.stock <= 0 %}
-                    <button class="btn btn-outline-danger btn-disabled">Add to Cart</button>
+                    <button class="btn1 btn-outline-danger btn-disabled">Add to Cart</button>
                     {% else %}
-                    <button data-product={{j.id}} data-action="add" class="btn update-cart">Add to Cart</button>
+                    <button data-product={{j.id}} data-action="add" class="btn1 update-cart">Add to Cart</button>
                     {% endif %}
                 </div>
             </div>

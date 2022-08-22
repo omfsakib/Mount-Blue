@@ -56,7 +56,6 @@
                     <th>Date Ordered</th>
                     <th>Status</th>
                     <th>View</th>
-                    <th>Delete</th>
                 </tr>
             </thead>
                 {% for order in orders %}
@@ -66,7 +65,6 @@
                     <th>{{order.date_added}}</th>
                     <th>{{order.status}}</th>
                     <td><a class="btn btn-sm btn-info" href="{% url 'store:view_order' order.id %}">View</a></td>
-                    <td><a class="btn btn-sm btn-danger" href="{% url 'store:delete_order' order.id %}">Delete</a></td>
                 </tr>
                 {% endfor %}
             </table>

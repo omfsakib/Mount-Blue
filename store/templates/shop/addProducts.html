@@ -110,6 +110,10 @@
             {{ form.stock|add_class:'form-control' }}
         </p>
         <p class="product-form">
+          <label for="id_stock">Product for: </label>
+          {{ form.c_for|add_class:'form-control' }}
+      </p>
+        <p class="product-form">
           <textarea name="description" cols="40" rows="10" placeholder="Description" class="form-control" required="" id="id_description" style="margin-top: 0px; margin-bottom: 0px; height: 73px;"></textarea>
       </p>
             <div class="dropdown">

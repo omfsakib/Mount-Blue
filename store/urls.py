@@ -12,6 +12,7 @@ app_name = 'store'
 
 urlpatterns = [
     path('register/',views.registerPage,name="register"),
+    path('shop/register/',views.shopOwnerRegisterPage,name="shop-register"),
     path('login/',views.loginPage,name="login"),
     path('logout/',views.logoutUser,name="logout"),path('reset-password/', PasswordResetView.as_view(
         template_name= 'accounts/reset_password.html',

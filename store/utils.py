@@ -12,6 +12,8 @@ def cookieCart(request):
     items = []
     order = {'get_cart_total':0, 'get_cart_items':0,'shipping':False}
     cartItems = order['get_cart_items']
+    cartTotal = order['get_cart_total']
+
     
     for i in cart :
         try:
@@ -21,7 +23,21 @@ def cookieCart(request):
             total = (product.price * cart[i]['quantity'])
             order['get_cart_total'] += total
             order['get_cart_items'] += cart[i]['quantity']
+
+
+            cartTotal = order['get_cart_total']
             
+            
+            if 'color' in cart[i]:
+                color = cart[i]['color']
+            else:
+                color = "undefined"
+
+            if 'size' in cart[i]:
+                size = cart[i]['size']
+            else:
+                size = "undefined"
+
             item = {
                 'product' : {
                     'id' : product.id,
@@ -30,18 +46,18 @@ def cookieCart(request):
                 },
                 'quantity' : cart[i]["quantity"],
                 'get_total': total,
-                'color' : cart[i]['color'],
-                'size' : cart[i]['size'],
+                'color': color,
+                'size': size,
             }
-            
             items.append(item)
             if product.digital == False:
                 order['shipping'] = True
     
+    
         except:
             pass
     
-    return {"cartItems":cartItems,"order":order,"items":items}
+    return {"order":order,"items":items,"cartItems":cartItems,'cartTotal':cartTotal}
 
 def guestOrder(request,data):
     name = data['form']['name']
@@ -71,12 +87,15 @@ def guestOrder(request,data):
     for item in items:
         product = Product.objects.get(id=item['product']['id'])
         shopowner = product.shopowner
-        order, created = Order.objects.get_or_create(customer=customer,shop=shopowner, complete=False)
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        order.shop.add(shopowner)
         
         orderItem = OrderItem.objects.get_or_create(
             product=product,
             order = order,
             shop=shopowner,
-            quantity = item['quantity']
+            quantity = item['quantity'],
+            size = item['size'],
+            color = item['color']
             )
     return customer,order
