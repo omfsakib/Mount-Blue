@@ -68,7 +68,7 @@
             <div class="content">
                 <p class="order_id">Memo No. {{order.id}}</p> <p class="order_date">Date : {{order.date_added}}</p><br><br><br>
                 <p>Name : {% if order.customer.user.first_name %} {{order.customer.user.first_name}} {{order.customer.user.last_name}} {% else %} ........................................................{% endif %}</p>
-                <p>Phone : +88{{order.customer.phone}}</p>
+                <p>Phone : {% if order.customer.phone %} +88{{order.customer.phone}} {% else %} ........................................................ {% endif %}</p>
                 <p>Address :{% if address %} {{address.address}}, {{address.city}}, {{address.state}} {%else%} ........................................................{%endif%}</p>
             </div><br><br>
             <div class="order_info">
@@ -97,7 +97,7 @@
                             <td>{{ i.shop }}</td>
                             {% endif %}
                             <td>{{i.product.name}}</td>
-                            <td>{%if i.size%}{{i.size}}{%endif%}</td>
+                            <td>{%if i.size%} {{i.size}} {%endif%}</td>
                             <td>{%if i.color%}{{i.color}}{%endif%}</td>
                             <td>{{i.quantity}}</td>
                             <td>{{i.rate|floatformat:2}}</td>

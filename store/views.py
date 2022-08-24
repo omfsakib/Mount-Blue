@@ -244,6 +244,10 @@ def change_password(request):
 
 
 def store(request):
+    if request.user.is_authenticated:
+        group = request.user.groups.all()[0].name
+        if group == 'shopowner':
+            return redirect('store:home')
     total_products = Product.objects.all().count()
     half_products = int(total_products) / 2
     latest_products = Product.objects.all().order_by('-date_created')[:half_products]
@@ -357,8 +361,8 @@ def cart(request):
         if total_items> 0:
             for item in items:
                 product = Product.objects.get(id = item.product.id)
-                sizes = product.size.all()
-                colors = product.color.all()
+                item.sizes = product.size.all()
+                item.colors = product.color.all()
                 item.image = ProductImages.objects.filter(product = product)[:1]
 
         
@@ -368,8 +372,8 @@ def cart(request):
                 'cartTotal':cartTotal,
                 'order':order,
                 'item.image':item.image,
-                'sizes':sizes,
-                'colors':colors
+                'item.sizes':item.sizes,
+                'item.colors':item.colors
             }
         else:
             context = {
@@ -390,8 +394,8 @@ def cart(request):
 
             for item in items:
                 product = Product.objects.get(id = item['product']['id'])
-                sizes = product.size.all()
-                colors = product.color.all()
+                item.sizes = product.size.all()
+                item.colors = product.color.all()
                 item['image'] = ProductImages.objects.filter(product = product)[:1]
 
             context = {
@@ -400,8 +404,8 @@ def cart(request):
                 'cartTotal':cartTotal,
                 'order':order,
                 'item.image':item['image'],
-                'sizes':sizes,
-                'colors':colors
+                'item.sizes':item.sizes,
+                'item.colors':item.colors
                 }
         else:
             context = {
@@ -844,7 +848,7 @@ def deleteOrder(request, pk):
     context = {'item':order,'action':action}
     return render(request,'store/delete.html',context)
 
-@login_required(login_url='login')
+@login_required(login_url='store:login')
 @shopowner_only
 def home(request):
     shopowner = request.user.shopowner
@@ -888,7 +892,7 @@ def offlineOrder(request):
         return redirect('store:offline-order')   
     
     if request.method == 'POST' and 'save' in request.POST:
-        order_x = Order.objects.get(shop=shop, complete=False)
+        order_x = Order.objects.get(shop=shop,transaction_id = shop.user.username, complete=False)
         order_x.complete = True
         order_x.status = "Delivered"
         order_x.save()
@@ -902,19 +906,24 @@ def offlineOrder(request):
     
     if request.method == 'POST' and 'amount' in request.POST:
         amount = request.POST.get('amount')
-        order_z = Order.objects.get(shop=shop, complete=False)
+        order_id = request.POST.get('order_id')
+        order_z = Order.objects.get(id = order_id)
         order_z.advance = float(amount)
         order_z.due = float(order_z.total) - float(order_z.advance)
         order_z.save()
+
     
-    order_check = Order.objects.filter(shop=shop, complete=False).count()
+
+    
+    order_check = Order.objects.filter(shop=shop, transaction_id = shop.user.username, complete=False).count()
     if order_check == 0:
         context ={
             'shop':shop,
             'products':products,
         }
     else:
-        order_y = Order.objects.get(shop=shop, complete=False)
+        order_y = Order.objects.get(shop=shop, transaction_id = shop.user.username, complete=False)
+        address_y = ShippingAddress.objects.get(order = order_y)
         orders = OrderItem.objects.filter(order = order_y)
         total = 0
         for i in orders:
@@ -924,9 +933,58 @@ def offlineOrder(request):
             order_y.save()
     
 
+        if request.method == 'POST' and 'customer_name' in request.POST:
+            customer_name = request.POST.get('customer_name')
+            customer_phone = request.POST.get('customer_phone')
+
+            customer, created = Customer.objects.get_or_create(
+            phone = customer_phone,
+            )
+            if created:
+                username = customer_phone
+                user = User.objects.create(username= username,first_name = customer_name)
+                customer.user = user
+                customer.save()
+                auth_token=str(uuid.uuid4())
+                profile_obj = UserProfile.objects.create(user = user,auth_token=auth_token)
+                profile_obj.save()
+                group = Group.objects.get(name = 'customer')
+                user.groups.add(group)
+                order_y.customer = customer
+                order_y.save()
+            else:
+                order_y.customer = customer
+                order_y.save()
+
+        if request.method == 'POST' and 'address' in request.POST:
+            address = request.POST.get('address')
+            state = request.POST.get('state')
+            city = request.POST.get('city')
+            shipping, created =  ShippingAddress.objects.get_or_create(
+                order = order_y
+            )
+
+            if created :
+                if order_y.customer:
+                    shipping.customer = order_y.customer
+                
+                shipping.address = address
+                shipping.city = city
+                shipping.state = state
+                shipping.save()
+            else:
+                if order_y.customer:
+                    shipping.customer = order_y.customer
+                shipping.address = address
+                shipping.city = city
+                shipping.state = state
+                shipping.save()
+
+
 
         context ={
             'order':order_y,
+            'address':address_y,
             'orders':orders,
             'shop':shop,
             'products':products,

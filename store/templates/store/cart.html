@@ -167,8 +167,8 @@
                 <div style="flex:1">{% for i in item.image %}<img class="row-image" src="{{i.img.url}}">{% endfor %}</div>
                 <div style="flex:1"><p>{{item.product.name}}</p></div>
                 <div style="flex:1"><p>&#2547;{{item.product.price|floatformat:2}}</p></div>
-                <div style="flex:1">{% for i in colors %} {% if item.color == i.color %} <input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="color" checked  data-color="{{i.color}}"> {{i.color}}</input> <br> {% else %}<input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="color"  data-color="{{i.color}}"> {{i.color}} </input><br> {% endif %}{% endfor %}</div>
-                <div style="flex:1">{% for i in sizes %}{% if item.size == i.size %} <input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="size" checked data-size="{{i.size}}" > {{i.size}}</input> <br> {% else %}<input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="size"  data-size="{{i.size}}" > {{i.size}} </input> <br> {% endif %}{% endfor %}</div>
+                <div style="flex:1">{% for i in item.colors %} {% if item.color == i.color %} <input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="color" checked  data-color="{{i.color}}"> {{i.color}}</input> <br> {% else %}<input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="color"  data-color="{{i.color}}"> {{i.color}} </input><br> {% endif %}{% endfor %}</div>
+                <div style="flex:1">{% for i in item.sizes %}{% if item.size == i.size %} <input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="size" checked data-size="{{i.size}}" > {{i.size}}</input> <br> {% else %}<input type="checkbox" class="update-cart" data-product="{{item.product.id}}" data-action="size"  data-size="{{i.size}}" > {{i.size}} </input> <br> {% endif %}{% endfor %}</div>
                 <div style="flex:1">
                     <p class="quantity">{{item.quantity}}</p>
                     <div class="quantity">

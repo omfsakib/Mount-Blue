@@ -32,7 +32,7 @@
 
 {% block main %}
 
-<section class="container"> <br>
+<section class="container"><br>
     <div class="product-form">
         <h3>Select Product :</h3>
         <form action="" method="POST">
@@ -44,7 +44,8 @@
                 {% endfor %}
               </select>
             
-            <input type="number" placeholder="quantity" class="form-control select-style" name="quantity" id="quantity"> <br>
+            <input type="number" placeholder="quantity" class="form-control select-style" name="quantity" id="quantity"> 
+            
             <button type="submit" class="btn btn-success">Submit</button>
         </form>
     </div> <br>
@@ -52,11 +53,30 @@
         <h3>Paid : </h3>
         <form action="" method="POST">
             {% csrf_token %}
-            <input type="number" id="paid" class="form-control input-style" name="amount" placeholder="Paid amount..."/>
-            <button type="submit" class="btn btn-outline-info">Paid</button>
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+            <input type="text" id="paid" class="form-control input-style" name="amount" placeholder="Paid amount..."/>
+            <button type="submit" class="btn btn-outline-info">Paid</button><br><br>
         </form>
     </div>
-    
+    <div class="customer_details">
+        <h3>Customer : </h3>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="customer_name" class="form-control input-style" placeholder="Customer name....">
+            <input type="text" name="customer_phone" class="form-control input-style" placeholder="Phone...."> 
+            <button type="submit" class="btn btn-info">Add</button><br><br>
+        </form>
+    </div>
+    <div class="shipping_address">
+        <h3>Shipping address: </h3>
+        <form method="POST">
+            {% csrf_token %}
+            <input class="form-control input-style" type="text" name="address" placeholder="Address..">
+            <input name="state" class="form-control input-style" type="text" placeholder="Area...">
+            <input name="city" class="form-control input-style" type="text" placeholder="City...">
+            <button type="submit" class="btn btn-info">Add</button><br><br>
+        </form>
+    </div>
     {% include 'memo_template.html' %} <br>
     {% if order %}
     <div class="order-edit">
