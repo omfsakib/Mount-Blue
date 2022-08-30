@@ -89,13 +89,18 @@ def guestOrder(request,data):
         shopowner = product.shopowner
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         order.shop.add(shopowner)
-        
+        quantity = item['quantity']
+        rate = product.price
+        total = float(product.price) * float(quantity)
         orderItem = OrderItem.objects.get_or_create(
             product=product,
             order = order,
+            customer=customer, 
             shop=shopowner,
             quantity = item['quantity'],
             size = item['size'],
-            color = item['color']
+            color = item['color'],
+            rate = rate,
+            total = total
             )
     return customer,order

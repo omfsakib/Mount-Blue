@@ -4,7 +4,7 @@ from django.shortcuts import redirect,render
 def unauthenticted_user(view_func):
     def wrapper_func(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('home')
+            return redirect('store:home')
         else:
             return view_func(request, *args, **kwargs) 
     
@@ -29,7 +29,7 @@ def shopowner_only(view_func):
         if request.user.groups.exists():
             group = request.user.groups.all()[0].name
         if group == 'customer':
-            return redirect('store')
+            return redirect('store:store')
         if group == 'shopowner':
             return view_func(request, *args, **kwargs)
     

@@ -75,7 +75,7 @@ def shopOwnerRegisterPage(request):
     email = request.POST.get('email')
     phone = request.POST.get('phone')
     address = request.POST.get('address')
-    img = request.POST.get('img')
+    img = request.FILES.get('img')
     password = request.POST.get('password1')
     if request.method == 'POST':
         form = CreateUserForm(request.POST,request.FILES)
@@ -330,7 +330,6 @@ def products(request):
         i.products = products.filter(category = i)
         
         for j in i.products:
-            i.products.c_for = j.c_for
             j.images = ProductImages.objects.filter(product = j)[:1]
             j.total_review = Review.objects.filter(product = j).count()
 
@@ -339,7 +338,6 @@ def products(request):
     top_reviewed = Product.objects.all().order_by('-rate')
 
     context = {
-        'i.products.c_for':i.products.c_for,
         'categorys':categorys,
         'i.products':i.products,
         'j.images':j.images,
@@ -394,8 +392,8 @@ def cart(request):
 
             for item in items:
                 product = Product.objects.get(id = item['product']['id'])
-                item.sizes = product.size.all()
-                item.colors = product.color.all()
+                item['sizes'] = product.size.all()
+                item['colors'] = product.color.all()
                 item['image'] = ProductImages.objects.filter(product = product)[:1]
 
             context = {
@@ -404,8 +402,8 @@ def cart(request):
                 'cartTotal':cartTotal,
                 'order':order,
                 'item.image':item['image'],
-                'item.sizes':item.sizes,
-                'item.colors':item.colors
+                'item.sizes':item['sizes'],
+                'item.colors':item['colors']
                 }
         else:
             context = {
@@ -488,7 +486,7 @@ def updateItem(request):
     action = data['action']
     color = data['color']
     size = data['size']
-
+    
     customer = request.user.customer
     product = Product.objects.get(id=productId)
     shopowner = product.shopowner
@@ -536,11 +534,14 @@ def processOrder(request):
     else:
         customer,order = guestOrder(request,data)
                 
+    print(customer,order)
     total = float(data['form']['total'])
+    print(order.get_cart_total,total)
     order.transaction_id = transaction_id
 
     if total == float(order.get_cart_total):
         order.complete = True
+        print(order.complete)
         delivery_charge = Delivery_charge.objects.all()
         for i in delivery_charge:
             chrge = i.fee
@@ -548,7 +549,7 @@ def processOrder(request):
         
         order.delivery_fee = chrge
         order.total = total + chrge
-    order.save()
+        order.save()
     
     if order.shipping == True:
         ShippingAddress.objects.create(
@@ -630,25 +631,37 @@ def categoryView(request,*args,**kwargs):
     else:
         cookieData = cookieCart(request)
         cartItems = cookieData['cartItems']
-
-    products = Product.objects.filter(*args,**kwargs)
-    categorys = Category.objects.all()
-    c_for = kwargs.pop('c_for')
     
-    for i in categorys:
-        i.products = products.filter(category = i)
-        for j in i.products:
-            j.images = ProductImages.objects.filter(product = j)[:1]
-            j.total_review = Review.objects.filter(product = j).count()
+    
+    c_for = kwargs.pop('c_for')
 
-    context = {
-        'c_for':c_for,
-        'categorys':categorys,
-        'i.products':i.products,
-        'j.images':j.images,
-        'j.total_review':j.total_review,
-        'cartItems':cartItems
-        }
+    products = Product.objects.filter(c_for = c_for)
+    total_products = products.count()
+    
+    if total_products > 0:
+        categorys = Category.objects.all()
+        
+        for i in categorys:
+            i.products = products.filter(category = i)
+            for j in i.products:
+                j.images = ProductImages.objects.filter(product = j)[:1]
+                j.total_review = Review.objects.filter(product = j).count()
+    
+        context = {
+            'c_for':c_for,
+            'categorys':categorys,
+            'i.products':i.products,
+            'j.images':j.images,
+            'j.total_review':j.total_review,
+            'cartItems':cartItems
+            }
+            
+    else:
+        context = {
+            'c_for':c_for,
+            'cartItems':cartItems
+            }
+        
     return render(request, "store/categoryview.html",context)
 
 def insideCategory(request,*args,**kwargs):
@@ -717,13 +730,11 @@ def view_shops(request,pk):
         i.products = products.filter(category = i)
         
         for j in i.products:
-            i.products.c_for = j.c_for
             j.images = ProductImages.objects.filter(product = j)[:1]
             j.total_review = Review.objects.filter(product = j).count()
 
     context = {
         'shop':shop,
-        'i.products.c_for':i.products.c_for,
         'categorys':categorys,
         'i.products':i.products,
         'j.images':j.images,
@@ -1020,6 +1031,7 @@ def addProducts(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         price = request.POST.get('price')
+        c_for = request.POST.get('c_for')
         images = request.FILES.getlist('images')
         total_images = len(images)
         if total_images > 3:
@@ -1035,6 +1047,7 @@ def addProducts(request):
             shopowner = shopowner,
             name = name,
             price = price,
+            c_for = c_for,
             stock = stock,
             description = description
         )
